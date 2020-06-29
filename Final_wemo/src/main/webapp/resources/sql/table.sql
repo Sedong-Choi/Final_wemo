@@ -1,6 +1,13 @@
+/*
+	cmd 들어가서 sys/1234 as sysdba 치고 다음 하나씩 복사 붙여넣기 하세요
+	GRANT CONNECT,RESOURCE,UNLIMITED TABLESPACE TO WEMOADMIN IDENTIFIED BY WEMOES;
+	ALTER USER WEMOADMIN DEFAULT TABLESPACE USERS;
+	ALTER USER WEMOADMIN TEMPORARY TABLESPACE TEMP;
+*/
+
 drop table memo purge;
-drop table mmember purge;
-create table mmember(
+drop table member purge;
+create table member(
 	USER_EMAIL varchar2(100) primary key,
 	USER_PASS varchar2(30)  not null,
 	USER_SUB varchar2(30),
@@ -10,7 +17,7 @@ create table mmember(
 );
 
 create table memo(
-	USER_EMAIL varchar2(100) references mmember(USER_EMAIL),
+	USER_EMAIL varchar2(100) references member(USER_EMAIL),
 	MEMO_NUM number(20),
 	MEMO_SUB varchar2(30),
 	MEMO_POSITION varchar2(20) default('absolute'),
@@ -26,9 +33,9 @@ create table memo(
 	MEMO_LOC varchar2(3) default ('N')
 );
 
-insert into mmember values('admin@admin.net','1','STUDY','NONE','admin','STUDY');
+insert into member values('admin@admin.net','1','STUDY','NONE','admin','STUDY');
 
-select*from mmember;
+select*from member;
 select*from memo;
 
 
