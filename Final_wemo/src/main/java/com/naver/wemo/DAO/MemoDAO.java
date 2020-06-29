@@ -35,16 +35,17 @@ public class MemoDAO {
 	}
 	public void newInsert(Memo memo) {
 		
-		
+		System.out.println(memo.getMEMO_TOP());
 		memo.setMEMO_POSITION("absolute");
-		if(memo.getMEMO_SUB()=="STUDY") {
+		if(memo.getMEMO_SUB().equals("STUDY")){
 			memo.setMEMO_COLOR("#010101");
-		}else if(memo.getMEMO_SUB()=="MONEY") {
+		}else if(memo.getMEMO_SUB().equals("MONEY")){
 			memo.setMEMO_COLOR("#4266f5");
-		}else if(memo.getMEMO_SUB()=="HEALTH") {
+		}else if(memo.getMEMO_SUB().equals("HEALTH")){
 			memo.setMEMO_COLOR("#de8e73");
 		};
-		memo.setMEMO_TEX("");
+		memo.setMEMO_TEX("");	
+		memo.setPREV_TEX("");
 		memo.setMEMO_FAV("N");
 		memo.setMEMO_LOC("N");
 		

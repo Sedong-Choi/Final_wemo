@@ -11,6 +11,6 @@
 					#{USER_NICK},#{USER_FORM})
 	</insert>
 	<select id="idcheck" parameterType="string" resultType="member">
-		select * from member where USER_EMAIL=#{USER_EMAIL}
+		select * from member where USER_EMAIL= #{USER_EMAIL}
 	</select>
 </mapper>

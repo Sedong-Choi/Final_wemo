@@ -26,7 +26,7 @@
 		insert into memo
 		values(#{USER_EMAIL},#{MEMO_NUM},#{MEMO_SUB},#{MEMO_POSITION},
 				#{MEMO_TOP},#{MEMO_LEFT},#{MEMO_COLOR},#{MEMO_ZIN},
-				#{MEMO_TEX},sysdate,sysdate,#{MEMO_PRE},#{MEMO_FAV},#{MEMO_LOC})	
+				#{MEMO_TEX},sysdate,sysdate,#{PREV_TEX},#{MEMO_FAV},#{MEMO_LOC})	
 	</insert>
 	
 	
