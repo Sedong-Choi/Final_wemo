@@ -6,11 +6,11 @@
 
 <mapper namespace="Members">
 	<insert id="insert" parameterType="member">
-		insert into mmember
+		insert into member
 			values(#{USER_EMAIL},#{USER_PASS},#{USER_SUB},#{AUTH_TYPE},
 					#{USER_NICK},#{USER_FORM})
 	</insert>
 	<select id="idcheck" parameterType="string" resultType="member">
-		select * from mmember where USER_EMAIL=#{USER_EMAIL}
+		select * from member where USER_EMAIL=#{USER_EMAIL}
 	</select>
 </mapper>
