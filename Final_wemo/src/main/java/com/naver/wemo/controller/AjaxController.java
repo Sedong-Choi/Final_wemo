@@ -220,11 +220,7 @@ public class AjaxController {
 	}
 	@ResponseBody
 	@GetMapping(value="/newMemo")
-	public void newMemo(@RequestParam(value="USER_EMAIL") String id,
-			@RequestParam(value="USER_SUB") String subject) {
-		Memo memo = new Memo();
-		memo.setUSER_EMAIL(id);
-		memo.setMEMO_SUB(subject);
+	public void newMemo(Memo memo) {
 		memodao.newInsert(memo);
 	}
 	

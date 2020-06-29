@@ -201,6 +201,9 @@
        		 var user = $('#user').text();
        		 
         	 var sub = $('#subject').text();
+        	 var top = Math.round()*10*Math.round()*100;
+        	 var left = Math.round()*10*Math.round()*150;
+        	 var zind = 1000;
         	 
              var recommendContainer = "<div class = 'container recommend draggable' >"
                  + "<span>혹시 메모의 내용이 이것인가요?</span>"
@@ -210,7 +213,7 @@
                  + "<button type = button class = 'btn btn-outline-warning homework'>숙제</button>"
                  + "<button type = button class = 'btn btn-outline-warning meeting'>회의 일정</button></div>";
 
-             var newMemobox = "<div class = 'container memobox shadow-sm' style='position:absolute;top:200px;left:300px;z-index:1000'><form>"
+             var newMemobox = "<div class = 'container memobox shadow-sm' style='position:absolute;top:"+top+"px;left:"+left+"px;z-index:1"+z-ind+""'><form>"
                  + "<div class = 'container memo-top'><span class = 'date'>" + today
                  + "</span><span class = 'section-name'>"+ sub +"</span>"
                  + "<span class = 'material-icons delete float-right'>delete</span>"
@@ -254,10 +257,13 @@
 					url:"newMemo",
 					data :{
 						"USER_EMAIL" : user,
-						"USER_SUB" : sub,						
+						"USER_SUB" : sub,
+						"MEMO_TOP" : top+"px",
+						"MEMO_LEFT" : left+"px",
+						"MEMO_ZIN" : zind
 					},
 					success : function(){
-						//$('.memobox').children().children().last().focus();
+						
 					}
              		
              		
