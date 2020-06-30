@@ -11,6 +11,8 @@ public class Memo {
 	private String MEMO_LEFT;	//메모 left 좌표
 	private String MEMO_COLOR;	//메모 색깔
 	private int MEMO_ZIN;		//메모 z 위치
+	private String MEMO_WIDTH;	//메모 폭
+	private String MEMO_HEIGHT;	//메모 높이
 	private String MEMO_TEX;	//메모 내용
 	private Date MEMO_DATE;		//메모 최초 작성일
 	private Date MEMO_PRE;		//메모 최종 수정일
@@ -101,6 +103,18 @@ public class Memo {
 	}
 	public void setMEMO_LOC(String mEMO_LOC) {
 		MEMO_LOC = mEMO_LOC;
+	}
+	public String getMEMO_WIDTH() {
+		return MEMO_WIDTH;
+	}
+	public void setMEMO_WIDTH(String mEMO_WIDTH) {
+		MEMO_WIDTH = mEMO_WIDTH;
+	}
+	public String getMEMO_HEIGHT() {
+		return MEMO_HEIGHT;
+	}
+	public void setMEMO_HEIGHT(String mEMO_HEIGHT) {
+		MEMO_HEIGHT = mEMO_HEIGHT;
 	}
 	
 }

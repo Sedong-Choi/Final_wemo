@@ -104,6 +104,7 @@ img.avatar {
 		Kakao.Auth.createLoginButton({
 			container : '#kakao-login-btn',
 			success : function(authObj) {
+
 					Kakao.API.request({
             		
             		url : '/v2/user/me',
@@ -122,6 +123,7 @@ img.avatar {
 				
 				data : {"user_name" : $('user_name')};
 						
+
 			},
 			fail : function(err) {
 				alert(JSON.stringify(err));
