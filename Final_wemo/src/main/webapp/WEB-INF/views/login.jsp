@@ -104,7 +104,24 @@ img.avatar {
 		Kakao.Auth.createLoginButton({
 			container : '#kakao-login-btn',
 			success : function(authObj) {
-				alert(JSON.stringify(authObj));
+					Kakao.API.request({
+            		
+            		url : '/v2/user/me',
+            		
+            		success : function(res){
+            			
+            			alert(JSON.stringify(res));
+            			
+            			document.body.innerHTML+=JSON.stringify(res);
+            			
+            			alert(JSON.stringify(authObj));
+            			
+            			var id = res.id;
+            			var email = res.kakao_account['email'];
+				location.href = "memo?USER_EMAIL="+email+"'";
+				
+				data : {"user_name" : $('user_name')};
+						
 			},
 			fail : function(err) {
 				alert(JSON.stringify(err));
