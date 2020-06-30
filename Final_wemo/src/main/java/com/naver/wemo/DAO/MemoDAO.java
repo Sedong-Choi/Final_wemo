@@ -26,6 +26,8 @@ public class MemoDAO {
 		memo.setMEMO_LEFT("100px");					//최초 LEFT 좌표
 		memo.setMEMO_COLOR(""); 					//최초 메모 배경색
 		memo.setMEMO_ZIN(1000); 					//최초 zindex
+		memo.setMEMO_WIDTH("350px");				//최초 메모 폭
+		memo.setMEMO_HEIGHT("200px");				//최초 메모 높이
 		memo.setMEMO_TEX("새로운 메모를 작성해 보세요!");	//최초 TEXT
 		// 최초 작성일, 최종 수정일은 xml에서 sysdate로 처리
 		// 최초 PREV_TEX == MEMO_TEX 와 동일
@@ -48,8 +50,8 @@ public class MemoDAO {
 		memo.setPREV_TEX("");
 		memo.setMEMO_FAV("N");
 		memo.setMEMO_LOC("N");
-		
-		
+		memo.setMEMO_WIDTH("350px");				//최초 메모 폭
+		memo.setMEMO_HEIGHT("200px");				//최초 메모 높이
 		sqlSession.insert("Memoes.newinsert",memo);
 	}
 	

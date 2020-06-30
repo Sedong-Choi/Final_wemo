@@ -177,6 +177,11 @@ public class AjaxController {
 		return mv;
 	}
 	
+	@RequestMapping(value = "/toMain",method = RequestMethod.GET)
+	public String index2() {
+		return "wemo_main";
+	}
+	
 	
 	@PostMapping(value="/joinProcess")
 	public void joinProcess(Member member,

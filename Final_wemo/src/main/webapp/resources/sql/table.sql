@@ -25,6 +25,8 @@ create table memo(
 	MEMO_LEFT varchar2(20),
 	MEMO_COLOR varchar2(20),
 	MEMO_ZIN number(20),
+	MEMO_WIDTH varchar2(20),
+	MEMO_HEIGHT varchar2(20),
 	MEMO_TEX CLOB,
 	MEMO_DATE date not null,
 	MEMO_PRE date,
