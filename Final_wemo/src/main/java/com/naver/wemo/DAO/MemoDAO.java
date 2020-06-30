@@ -1,6 +1,7 @@
 package com.naver.wemo.DAO;
 
 import java.util.List;
+import java.util.Random;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,23 @@ public class MemoDAO {
 		memo.setMEMO_LOC("N"); 						//최초 잠금 No
 		sqlSession.insert("Memoes.firstinsert", memo);
 	}
-	public void newInsert(Memo memo) {		
+	public void newInsert(Memo memo) {
+		
+		System.out.println(memo.getMEMO_TOP());
+		memo.setMEMO_POSITION("absolute");
+		if(memo.getMEMO_SUB().equals("STUDY")){
+			memo.setMEMO_COLOR("#010101");
+		}else if(memo.getMEMO_SUB().equals("MONEY")){
+			memo.setMEMO_COLOR("#4266f5");
+		}else if(memo.getMEMO_SUB().equals("HEALTH")){
+			memo.setMEMO_COLOR("#de8e73");
+		};
+		memo.setMEMO_TEX("");	
+		memo.setPREV_TEX("");
+		memo.setMEMO_FAV("N");
+		memo.setMEMO_LOC("N");
+		
+		
 		sqlSession.insert("Memoes.newinsert",memo);
 	}
 	
