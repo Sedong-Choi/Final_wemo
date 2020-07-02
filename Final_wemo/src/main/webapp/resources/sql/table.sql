@@ -7,6 +7,7 @@
 
 drop table memo purge;
 drop table member purge;
+drop table calendar purge;
 create table member(
 	USER_EMAIL varchar2(100) primary key,
 	USER_PASS varchar2(30)  not null,
@@ -33,6 +34,14 @@ create table memo(
 	PREV_TEX CLOB,	
 	MEMO_FAV varchar2(3) default ('N'),
 	MEMO_LOC varchar2(3) default ('N')
+);
+
+create table calendar(
+	USER_EMAIL varchar2(100),
+	MEMO_SUB varchar2(30),
+	MEMO_TEX CLOB,
+	MEMO_DATE date not null,
+	MEMO_PRE date
 );
 
 insert into member values('admin@admin.net','1','STUDY','NONE','admin','STUDY');
