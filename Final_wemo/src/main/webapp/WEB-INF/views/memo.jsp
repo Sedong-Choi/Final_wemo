@@ -73,6 +73,9 @@
         .memo-top {
             margin: 5px;
         }
+        #calendar{
+        	cursor : pointer;
+        }
     </style>
 </head>
 <body>
@@ -90,10 +93,12 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" id="health">운동</a>
-              
             </li>
             <li class="nav-item">
               <a class="nav-link" id="money">가계부</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="calendar" onClick="location.href='Calendar'">캘린더</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"  id="week">주간 메모</a>
