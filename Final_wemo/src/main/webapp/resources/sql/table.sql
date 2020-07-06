@@ -38,6 +38,7 @@ create table memo(
 
 create table calendar(
 	USER_EMAIL varchar2(100),
+	USER_PASS varchar2(30) not null,
 	MEMO_SUB varchar2(30),
 	MEMO_TEX CLOB,
 	MEMO_DATE date not null,

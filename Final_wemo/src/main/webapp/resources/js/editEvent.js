@@ -103,7 +103,7 @@ $('#deleteEvent').on('click', function () {
     //삭제시
     $.ajax({
         type: "get",
-        url: "",	//delete
+        url: "calendarDeleteAction",	//delete
         data: {
             //...
         },

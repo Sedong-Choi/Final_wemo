@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -162,7 +161,6 @@ public class AjaxController {
 			if(lastsection.equals("STUDY")) {
 				
 				memolist =memodao.selectStudy(mem);
-				System.out.println(memolist.get(0).getMEMO_TEX());
 			}else if(lastsection.equals("MONEY")) {
 				
 				memolist =memodao.selectMoney(mem);
