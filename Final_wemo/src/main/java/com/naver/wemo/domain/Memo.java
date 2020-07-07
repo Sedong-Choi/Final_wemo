@@ -2,6 +2,9 @@ package com.naver.wemo.domain;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class Memo {
 	private String USER_EMAIL; 	//ID
 	private int MEMO_NUM;		//메모 넘버

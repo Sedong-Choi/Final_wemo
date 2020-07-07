@@ -131,32 +131,19 @@
             </div>
 
             <div class="panel-body">
-
                 <div class="col-lg-6">
-                    <label for="calendar_view">구분별</label>
+                    <label for="calendar_view">카테고리</label>
                     <div class="input-group">
-                        <select class="filter" id="type_filter" multiple="multiple">
-                            <option value="카테고리1">카테고리1</option>
-                            <option value="카테고리2">카테고리2</option>
-                            <option value="카테고리3">카테고리3</option>
-                            <option value="카테고리4">카테고리4</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <label for="calendar_view">등록자별</label>
-                    <div class="input-group">
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="정연"
-                                checked>정연</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="다현"
-                                checked>다현</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="사나"
-                                checked>사나</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="나연"
-                                checked>나연</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="지효"
-                                checked>지효</label>
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="공부"
+                                checked>공부</label>
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="운동"
+                                checked>운동</label>
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="가계부"
+                                checked>가계부</label>
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="요리"
+                                checked>요리</label>
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="기타"
+                                checked>기타</label>
                     </div>
                 </div>
 

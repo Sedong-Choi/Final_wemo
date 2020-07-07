@@ -6,17 +6,27 @@
 
 <mapper namespace="Cal">
 
-	<insert id="insert" parameterType="calendar">
+	<insert id="insert" parameterType="memo">
 		insert into calendar
 		values(#{USER_EMAIL},#{MEMO_SUB},sysdate,sysdate,#{MEMO_PRE})
 	</insert>
 	
-	<select id="select">
-		select * from calendar
-			where MEMO_SUB AND USER_EMAIL=#{USER_EMAIL}
+	<select id="count" resultType="int">
+		select count(*) from calendar
 	</select>
 	
-	<update id="update" parameterType="calendar">
+	<select id="list" parameterType="java.util.Map" resultType="memo">
+	 	select * from
+	 		( select rownum rnum, b.*
+	 		  from
+	 				(select * from calendar
+	 				 order by MEMO_DATE desc,
+	 				 MEMO_PRE asc) b
+	 		)
+	 	where rnum &gt;= #{start} and rnum &lt;= #{end}
+	 </select>
+	 
+	<update id="update" parameterType="memo">
 		update calendar
 			set	MEMO_SUB = #{MEMO_SUB},
 				MEMO_TEX = #{MEMO_TEX},
@@ -25,7 +35,7 @@
 			where USER_EMAIL = #{USER_EMAIL}
 	</update>
 	
-	<delete id="delete" parameterType="calendar">
+	<delete id="delete" parameterType="memo">
 		delete from calendar
 			where USER_EMAIL = #{USER_EMAIL}
 	</delete>

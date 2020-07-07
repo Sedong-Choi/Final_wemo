@@ -6,7 +6,6 @@
 	<typeAliases>
 		<typeAlias alias="member"		type="com.naver.wemo.domain.Member"/>
 		<typeAlias alias="memo"	 		type="com.naver.wemo.domain.Memo"/>
-		<typeAlias alias="calendar"		type="com.naver.wemo.domain.Calendar"/>
 		
 	</typeAliases>
 	

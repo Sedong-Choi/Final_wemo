@@ -37,12 +37,12 @@ create table memo(
 );
 
 create table calendar(
-	USER_EMAIL varchar2(100),
-	USER_PASS varchar2(30) not null,
-	MEMO_SUB varchar2(30),
-	MEMO_TEX CLOB,
-	MEMO_DATE date not null,
-	MEMO_PRE date
+	USER_EMAIL varchar2(100),			/*아이디*/
+	USER_PASS varchar2(30) not null,	/*비밀번호*/
+	MEMO_SUB varchar2(30),				/*카테고리*/
+	MEMO_TEX CLOB,						/*내용*/
+	MEMO_DATE date not null,			/*최초 작성일*/
+	MEMO_PRE date						/*최종 작성일*/
 );
 
 insert into member values('admin@admin.net','1','STUDY','NONE','admin','STUDY');

@@ -81,7 +81,7 @@ var editEvent = function (event, element, view) {
         //일정 업데이트
         $.ajax({
             type: "get",
-            url: "",	//update
+            url: "calendarupdate.net",	//update
             data: {
                 //...
             },
@@ -103,7 +103,7 @@ $('#deleteEvent').on('click', function () {
     //삭제시
     $.ajax({
         type: "get",
-        url: "calendarDeleteAction",	//delete
+        url: "calendarDeleteAction.net",	//delete
         data: {
             //...
         },

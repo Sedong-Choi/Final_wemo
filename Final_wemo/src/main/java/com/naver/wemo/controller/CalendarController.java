@@ -1,6 +1,10 @@
 package com.naver.wemo.controller;
 
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,48 +14,34 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.naver.wemo.DAO.CalendarDAO;
-import com.naver.wemo.domain.Calendar;
 import com.naver.wemo.domain.Memo;
 
 @Controller
 public class CalendarController {
 	
-	@Autowired Calendar calendar;
-	 
-	@Autowired CalendarDAO calendardao;
-	
 	@Autowired Memo memo;
 	 
-	
+	@Autowired CalendarDAO calendardao; 
+	 
 	@RequestMapping("/Calendar")
 	public String newCalendar() {
 		return "Calendar";
 	}
 	
 	@RequestMapping("/CalendarWrite.net")
-	public String calendar_write() {
+	public String calendar_write(Memo memo) {
+		calendardao.insert(memo);
 		return "";
 	}
 	
 	@PostMapping("calendarDeleteAction.net")
 	public ModelAndView calendarDeleteAction(ModelAndView mv, HttpServletResponse response,
 			HttpServletRequest request,String USER_EMAIL, int num) throws Exception{
-		
-		boolean usercheck = calendardao.isCalendarWriter(num, USER_EMAIL);
-		
-		if(usercheck == false) {
-			response.setContentType("text/html;charset=utf-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>"); 
-			out.println("alert('비밀번호가 다릅니다.');"); 
-			out.println("history.back();");
-			out.println("</script>");
-			out.close();
-			return null;
-		}
 		
 		int result = calendardao.calendarDelete(num);
 		
@@ -68,7 +58,6 @@ public class CalendarController {
 		PrintWriter out = response.getWriter(); 
 		out.println("<script>"); 
 		out.println("alert('삭제 되었습니다.');"); 
-		out.println("location.href='BoardList.bo';"); 
 		out.println("</script>");
 		out.close();
 		return null;
@@ -84,10 +73,8 @@ public class CalendarController {
 		// 삽입이 된 경우
 		   if (result == 1) {
 			   out.println("alert('수정되었습니다.');");
-			   out.println("location.href='Calendar';");
 		   } else {
 			   out.println("alert('수정실패했습니다.');");
-			   out.println("location.href='Calendar';");
 		   }
 		   out.println("</script>");
 		   out.close();
@@ -102,10 +89,8 @@ public class CalendarController {
 		// 삽입이 된 경우
 		   if (result == 1) {
 			   out.println("alert('수정되었습니다.');");
-			   out.println("location.href='Calendar';");
 		   } else {
 			   out.println("alert('수정실패했습니다.');");
-			   out.println("location.href='Calendar';");
 		   }
 		   out.println("</script>");
 		   out.close();
@@ -120,12 +105,29 @@ public class CalendarController {
 		// 삽입이 된 경우
 		   if (result == 1) {
 			   out.println("alert('수정되었습니다.');");
-			   out.println("location.href='Calendar';");
 		   } else {
 			   out.println("alert('수정실패했습니다.');");
-			   out.println("location.href='Calendar';");
 		   }
 		   out.println("</script>");
 		   out.close();
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/calendarListAjax.net")
+	public Map<String,Object> calendarListAjax(
+			@RequestParam(value="page", defaultValue="1", required=false) int page,
+			@RequestParam(value="limit", defaultValue="1000", required=false) int limit
+			)
+			{
+		int listcount = calendardao.getListCount();	// 총 리스트  수를 받아옴.
+		
+		List<Memo> calendarlist = calendardao.getcalendarList(page, limit); // 리스트 받아옴
+		
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("page", page);
+		map.put("listcount", listcount);
+		map.put("calendarlist", calendarlist);
+		map.put("limit", limit);
+		return map;
+			}
 }

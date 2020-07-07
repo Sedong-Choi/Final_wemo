@@ -38,9 +38,9 @@ var newEvent = function (start, end, eventType) {
     //새로운 일정 저장버튼 클릭
     $('#save-event').unbind();
     $('#save-event').on('click', function () {
-
+    	var USER_EMAIL = $('#USER_EMAIL').val();
         var eventData = {
-            _id: eventId,
+            _id: USER_EMAIL,
             title: editTitle.val(),
             start: editStart.val(),
             end: editEnd.val(),
@@ -81,7 +81,7 @@ var newEvent = function (start, end, eventType) {
         //새로운 일정 저장
         $.ajax({
             type: "get",
-            url: "CalendarWrite",	//insert
+            url: "CalendarWrite.net",	//insert
             data: {
                 //.....
             },

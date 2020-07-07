@@ -164,12 +164,13 @@ var calendar = $('#calendar').fullCalendar({
    *  일정 받아옴 
    * ************** */
   events: function (start, end, timezone, callback) {
-    $.ajax({
+    $.ajax({		//1일  월말   	서울		..
       type: "get",
-      url: "",		// select
+      url: "calendarListAjax.net",		// select
       data: {
         // 실제 사용시, 날짜를 전달해 일정기간 데이터만 받아오기를 권장
       },
+      dataType:"json",
       success: function (response) {
         var fixedDate = response.map(function (array) {
           if (array.allDay && array.start !== array.end) {
@@ -200,7 +201,7 @@ var calendar = $('#calendar').fullCalendar({
     //리사이즈한 일정 업데이트
     $.ajax({
       type: "get",
-      url: "",		//update
+      url: "calendarREupdate.net",		//update
       data: {
         //id: event._id,
         //....
@@ -235,7 +236,7 @@ var calendar = $('#calendar').fullCalendar({
     //드롭한 일정 업데이트
     $.ajax({
       type: "get",
-      url: "",		// update
+      url: "calendarDGupdate.net",		// update
       data: {
         //...
       },

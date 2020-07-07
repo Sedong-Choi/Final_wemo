@@ -1,5 +1,8 @@
 package com.naver.wemo.DAO;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,15 +19,8 @@ public class CalendarDAO {
 	 public void insert(Memo memo)
 	 { sqlSession.insert("Cal.insert", memo); }
 	 
-	 public void select(Memo memo)
-	 { sqlSession.selectOne("Cal.select", memo); }
-	 
 	 public int update(Memo memo)
-	 { return sqlSession.update("Cal.update", memo); }
-
-	public boolean isCalendarWriter(int num, String uSER_EMAIL) {
-		return false;
-	}
+	 { return sqlSession.update("Cal.update", memo); }	
 
 	public int calendarDelete(int num) {
 		return sqlSession.delete("Cal.calendarDelete", num);
@@ -36,6 +32,15 @@ public class CalendarDAO {
 
 	public int DGupdate(Memo memo) {
 		return sqlSession.update("Cal.DGupdate",memo);
+	}
+
+	public int getListCount() {
+		return sqlSession.selectOne("Cal.count");
+	}
+
+	public List<Memo> getcalendarList(int page, int limit) {
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		return sqlSession.selectList("Cal.list",map);
 	}
 	 
 }
