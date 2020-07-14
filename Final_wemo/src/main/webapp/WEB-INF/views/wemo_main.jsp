@@ -1,608 +1,136 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%><!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%><!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="ko">
 <head>
+<title>WeMo -Ïö∞Î¶¨Îì§Ïùò Î©îÎ™®-</title>
 
-    <!-- Material Icons (for simple icons) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<!-- Material Icons (for simple icons) -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- Google Charts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<!-- JQuery & Ajax -->
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <!-- jquery-ui (util for drag/snap) -->
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- BootStrap & Popper -->
+<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 
-    <!-- Google Font (Noto Sans KR) -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeMo</title>
-    <style>
-        .navTable {
-            border-collapse: collapse;
-        }
-        td {
-            border-radius : 5% 5% 0% 0%;
-            width : 8%;
-            line-height: 40px;
-            height: 40px;
-            font-weight: 700;
-            text-align: center;
-        }
-        td:last-child{
-            border-radius : 0% 0%;
-            width : 600px;
-        }
+<!-- jquery-ui (util for drag/snap) -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-        .trash {
-            color: white;
-            
-        }
-        .bg-search{
-            background-color : #CCC;
-        }
-        .search_input{
-            font-size : 20pt;
-            line-height: 20px;
-            width : 200px;
-            border : 1px solid gray;
-            box-shadow: 1px 1px gray;
-            border-radius : 5px;
-        }
-        .mobile-row td {
-            width : 33%;
-            height: 20px;
-            font-weight: 700;
-            text-align: center;
-        }
+<!-- Google Font (Noto Sans KR) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
 
-        #mobile-tbody{
-            display : none;
-        }
-       
-        * {
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-        .memobox {
-            margin-top: 20px;
-            height: 200px;
-            width: 350px;
-            box-sizing: border-box;
-            border: 1px solid #CCC;
-            border-radius: 5px;
-            box-shadow: 5px gray;
-            background: khaki;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .recommend {
-            margin-top: 10px;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid orange;
-            border-radius: 5px;
-            width: 80%;
-        }
-
-        .btn {
-            font-weight: 700;
-        }
-
-        .close {
-            cursor: pointer;
-        }
-
-        .memoContent {
-            margin: 10px;
-        }
-
-        .recomList {
-            margin-top: 10px;
-        }
-
-        .newMemo {
-            cursor: pointer;
-        }
-
-        .onFavo {
-            color: salmon;
-        }
-
-        .memo-top {
-            margin: 5px;
-        }
-    </style>
-    <script>
-    $(function(){
-        
-        navbarAddEvent();
-        $(window).resize(function(){
-        	
-        	var maxSectionWidth = window.innerWidth;
-            $('.memobox').resizable({
-                maxWidth: maxSectionWidth
-            })
-            
-            if($(window).innerWidth() > 900){
-                var normalNav = '<table class="table navTable">'
-                              + '<tbody><tr class="first-row">'
-                              +  '<td>WeMo</td>'
-                              +  '<td class="bg-primary">∞¯∫Œ</td>'
-                              +  '<td class="bg-warning">øÓµø</td>'
-                              +  '<td class="bg-success">∞°∞Ë∫Œ</td>'
-                              +  '<td class="bg-danger">ƒ∂∏∞¥ı</td>'
-                              +  '<td class="bg-secondary">∫∏∞¸µ» ∏ﬁ∏</td>'
-                              +  '<td class="bg-dark trash">»ﬁ¡ˆ≈Î</td>'
-                              +  '<td class="bg-info">≈Î∞Ë</td>'
-                              +  '<td class="bg-search">'
-                              + '<span class="material-icons float-right" '
-                              + 'style = "line-height: 24pt;">search<span>&nbsp;'
-                              + '<span><input type = "text" class = "search_input float-right"></span>'
-                              + '</td></tr></tbody></table>'
-                $('nav').html(normalNav);
-                navbarAddEvent();                
-            
-            } else {
-                var mobileNav = '<table class="table navTable"><thead>'
-                              + '<tr class="mobile-row">'
-                              + '<td>Wemo</td><td></td><td>'
-                              + '<span class="togglebtn material-icons float-right">list</span></td></tr></thead>'
-                              + '<tbody id = "mobile-tbody">'
-                              + '<tr class="mobile-row">'
-                              + '<td class="bg-primary">∞¯∫Œ</td>'
-                              + '<td class="bg-warning">øÓµø</td>'
-                              + '<td class="bg-success">∞°∞Ë∫Œ</td></tr>'
-                              + '<tr class="mobile-row">'
-                              + '<td class="bg-danger">ƒ∂∏∞¥ı</td>'
-                              + '<td class="bg-secondary">∫∏∞¸µ» ∏ﬁ∏</td>'
-                              + '<td class="bg-dark trash">»ﬁ¡ˆ≈Î</td></tr>'
-                              + '<tr class="mobile-row">'
-                              + '<td class="bg-info">≈Î∞Ë</td>'
-                              + '<td class="bg-search" colspan = "2">'
-                              + '<span class="material-icons float-right"'
-                              + ' style = "line-height: 24pt;">search<span>&nbsp;'
-                              + '<input type = "text" class = "search_input float-right"></td></tr></tbody></table>'
-                $('nav').html(mobileNav);
-                $('.togglebtn').on('click', function(){
-                $('#mobile-tbody').toggle('fast');
-            })
-                        .css('cursor', 'pointer');
-            }
-        })
-
-        function navbarAddEvent(){
-            var navbarItems = $('.first-row td');
-            navbarItems.css({"cursor" : "pointer"});
-            
-            $.each(navbarItems,function(index, e){
-            
-            var firstSpanColValue = index;
-            var secondSpanColValue = navbarItems.length-index -1;
-            
-        if (index != 0 && index != 8){
-            $(navbarItems[index]).click(function(){
-                var bgColorClass = $(navbarItems[index]).attr('class');
-                console.log(bgColorClass);
-                console.log(firstSpanColValue);
-                console.log(secondSpanColValue);
-                if($('.second-row'))
-                    $('.second-row').last().remove();
-                $('.first-row').after("<tr class = 'second-row'><td colspan='"+firstSpanColValue+"'></td><td class = '"+bgColorClass+"'></td><td colspan = '"+secondSpanColValue+"'</td></tr>")
-                                
-                $('.second-row td').css({
-                    "border-collapse" : "collapse", 
-                    "border" : "none",
-                    "border-collapse" : "collapse",
-                    "border-radius" : "0% 0% 5% 5%"
-                })
-                })
-            }
-        })
-        }
-        
-            /* ø¿¥√ ≥Ø¬• ª˝º∫«ÿº≠ date ≈¨∑°Ω∫∞° ¿÷¥¬ span ≈¬±◊ø° ª¿‘ */
-            var date = new Date();
-            if (date.getMonth() + 1 < 10)
-                var month = "0" + (date.getMonth() + 1);
-            else
-                var month = data.getMonth() + 1;
-            var today = date.getFullYear() + "-" + month + "-" + date.getDate();
-
-            $('.date').text(today);
-
-             /* newMemo(≥◊∫Ò∞‘¿Ãº« πŸ ≥ªø° ∞¯∫Œ/øÓµø/ƒ∂∏∞¥ı ≈«)≈¨∏ØΩ√ ªı ∏ﬁ∏∏¶ ª˝º∫ */
-            $('.newMemo').on('click', newMemoAppend);
-
-             /* √≥¿Ω µÈæÓø‘¿ª ∂ß ∆‰¿Ã¡ˆø° ¡∏¿Á«œ¥¬ ∏µÁ ∏ﬁ∏ø° ¿Ã∫•∆Æ ∫Œø© */
-            $('.close').on('click', recomCloseEventAdd);
-            $('.lock').on('click', lockEventAdd);
-            $('.favorites').on('click', favoEventAdd);           
-            $('.delete').on('click', deleteEventAdd);
-
-             /* ∏ﬁ∏π⁄Ω∫∏¶ µÂ∑°±◊∞° ∞°¥…«— ∞¥√º∑Œ ∫Ø∞Ê«œ¥¬ «‘ºˆ draggable() @jQueryUI.js */
-            $('.memobox').draggable()
-                .resizable({
-                    minWidth: 200,
-                    maxWidth: 500,
-                    minHeight: 130
-                })
-                 /* ∏ﬁ∏ ∏ÆªÁ¿Ã¡Ó ∞°¥…«— √÷º“ƒ° √÷¥Îƒ° º≥¡§ */
-                .resize(function (e) {
-                    var memoWidth = $(this).width();
-                    var memoHeight = $(this).height();
-                    if (memoHeight < 220 || memoWidth < 220) {
-                        $(this).children().children().next().css("display", "none");
-                    } 
-                })
-                 /* ∏ﬁ∏π⁄Ω∫∞° ≥ π´ ¿€æ∆¡ˆ∏È √ﬂ√µ√¢¿Ã ¿⁄µø¿∏∑Œ ªÁ∂Û¡ˆµµ∑œ º≥∞Ë */
-                .one('click', addTextArea)
-                 /* ∏ﬁ∏π⁄Ω∫ ≥ªø° ª¿‘µ«¥¬ textarea¥¬ ¥‹ «— π¯∏∏ Ω««‡µ«µµ∑œ on()¿Ã æ∆¥— one()¿∏∑Œ ¿Ã∫•∆Æ ∫Œø© */
-                .mouseup(adjustMemoboxzindex)                     
-                .mousedown(function(e){
-                    $(this).css("z-index", 1000);
-                }) // mousedown end
-
-            $('.memotext').keydown(autoResizeTextArea);
-            $('.memotext').focusout(memoOutResize);
-
-             /* √ﬂ√µπ⁄Ω∫ ≥ªø° ¿÷¥¬ ≈¬±◊ø° ∞¢∞¢ ∆˚ ±∏«ˆ -> ºˆ¡§øπ¡§ */
-            $('.tel').on('click', telFormAdd)
-            $('.todo').on('click', todoFormAdd)
-            $('.homework').on('click', homeworkFormAdd)
-            $('.meeting').on('click', meetingFormAdd)
-
-            
-
-
-            /* UI ¿€æ˜ ≥°≥™∞Ì ø©±‚º≠∫Œ≈Õ ∞¢ ∞≥√ºø° ¿˚øÎ«œ¥¬ «‘ºˆµÈ ¡§¿« */
-
-            // ªı ∏ﬁ∏∏¶ ∏ﬁ∏ ƒ¡≈◊¿Ã≥ ø° ª˝º∫«œ¥¬ newMemoAppend() «‘ºˆ
-            function newMemoAppend(){
-
-                var recommendContainer = "<div class = 'container recommend draggable' >"
-                    + "<span>»§Ω√ ∏ﬁ∏¿« ≥ªøÎ¿Ã ¿Ã∞Õ¿Œ∞°ø‰?</span>"
-                    + "<span class='material-icons close'> close </span><br>"
-                    + "<button type = button class = 'btn btn-outline-warning tel'>¿¸»≠π¯»£</button>&nbsp;"
-                    + "<button type = button class = 'btn btn-outline-warning todo'>«“ ¿œ</button>"
-                    + "<button type = button class = 'btn btn-outline-warning homework'>º˜¡¶</button>"
-                    + "<button type = button class = 'btn btn-outline-warning meeting'>»∏¿« ¿œ¡§</button></div>";
-
-                var style = 'left: 100px; top: 100px; z-index: 1000;'
-
-                var newMemobox = "<div class = 'container memobox shadow-sm' style = "+style+"><form>"
-                    + "<div class = 'container memo-top'><span class = 'date'>" + today
-                    + "</span><span class = 'section-name'> " + this.text + "</span>"
-                    + "<span class = 'material-icons delete float-right'>delete</span>"
-                    + "<span class = 'material-icons favorites float-right'>stars</span>"
-                    + "<span class = 'material-icons float-right lock'>lock_open</span></div>"
-                    + recommendContainer
-                    + "<div class = 'container memoContent'></div></form></div>";
-
-                $('.memoContainer').append(newMemobox);
-
-                var findNewMemoBox = $('.memoContainer').last().find('.memobox');
-                findNewMemoBox.draggable()
-                    .resizable({
-                        minWidth: 200, maxWidth: 500, minHeight: 200
-                        })
-                    .resize(function (e) {
-                        var memoWidth = $(this).width();
-                        var memoHeight = $(this).height();
-                        if (memoHeight < 220 || memoWidth < 220) {
-                            $(this).children().children().next().css("display", "none");
-                        }
-                    })
-                    // «— π¯∏∏ Ω««‡µ«¥¬ textarea ª˝º∫ ¿Ã∫•∆Æ∏¶ .memobox ≈¨∑°Ω∫ø° √ﬂ∞°
-                    .one('click', findNewMemoBox, addTextArea)
-
-                    // ≥™∏”¡ˆ æ∆¿Ãƒ‹µÈø° ∞¢∞¢ ¿Ã∫•∆Æ √ﬂ∞°
-                    .on('click', '.favorites', favoEventAdd)
-                    .on('click', '.lock', lockEventAdd)
-                    .on('click', '.delete', deleteEventAdd)
-                    .on('click', '.close', recomCloseEventAdd)
-
-                    // √ﬂ√µ √¢ πˆ∆∞ø° ¿Ã∫•∆Æ √ﬂ∞°
-                    .on('click', '.tel', telFormAdd)
-                    .on('click', '.todo', todoFormAdd)
-                    .on('click', '.homework', homeworkFormAdd)
-                    .on('click', '.meeting', meetingFormAdd)
-                
-                    .mouseup(adjustMemoboxzindex)
-                    .mousedown(bringFront) // mousedown end
-                    .css("position", "absolute")
-                adjustMemoboxzindex();
-            }
-
-        function telFormAdd() {
-                var memoContent = $(this).parent().next();
-                memoContent.html(
-                    "<div class = 'input-group recomList'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>¿Ã∏ß</span></div>"
-                    + "<input type ='text' name = 'name' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class ='input-group-prepend'>"
-                    + "<span class = 'input-group-text'>¿¸»≠π¯»£</span></div>"
-                    + "<input type ='text' name = 'tel' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>∏ﬁ∏</span></div>"
-                    + "<textarea class = 'form-control' name = 'memo'/></textarea>"
-                    + "<button class = 'btn btn-outline-success'>¿‘∑¬</button></div>"
-                )
-            }
-
-        function homeworkFormAdd() {
-                var memoContent = $(this).parent().next();
-                memoContent.html(
-                    "<div class = 'input-group recomList'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>∞˙∏Ò∏Ì</span></div>"
-                    + "<input type ='text' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class ='input-group-prepend'>"
-                    + "<span class = 'input-group-text'>æ¡¶±Ó¡ˆ?</span></div>"
-                    + "<input type ='text' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>∏ﬁ∏</span></div>"
-                    + "<textarea class = 'form-control'/></textarea>"
-                    + "<button class = 'btn btn-outline-success'>¿‘∑¬</button></div>"
-                )
-            }
-
-        function meetingFormAdd() {
-                var memoContent = $(this).parent().next();
-                memoContent.html(
-                    "<div class = 'input-group recomList'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>æ¡¶?</span></div>"
-                    + "<input type ='text' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class ='input-group-prepend'>"
-                    + "<span class = 'input-group-text'>æÓµº≠?</span></div>"
-                    + "<input type ='text' class = 'form-control'/></div>"
-                    + "<div class = 'input-group'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>æÓ∂≤ »∏¿«?</span></div>"
-                    + "<textarea class = 'form-control'/></textarea>"
-                    + "<button class = 'btn btn-outline-success'>¿‘∑¬</button></div>"
-                )
-            }
-
-        function todoFormAdd() {
-                var memoContent = $(this).parent().next();
-                memoContent.html(
-                    "<div class = 'input-group recomList'>"
-                    + "<div class = 'input-group-prepend'>"
-                    + "<span class = 'input-group-text'>«“ ¿œ</span></div>"
-                    + "<textarea class = 'form-control' rows = '5'></textarea>"
-                    + "<button class = 'btn btn-outline-success'>¿‘∑¬</button></div>"
-                )
-            }
-        
-        // ∏ﬁ∏π⁄Ω∫ ≈¨∏Ø«œ∏È textarea∏¶ ∏ﬁ∏ ≥ªø° ª¿‘«œ¥¬ «‘ºˆ
-        function addTextArea(Event) {
-            //∞¥√º ≥ªø° textarea∞° «œ≥™µµ æ¯¿ª ∂ß∏∏ Ω««‡µ«µµ∑œ «‘
-            if($(this).find($('textarea')).length == 0){
-                console.log(this.toString())
-                $(this).append("<textarea class = 'memotext form-control' style='overflow-y:hidden; resize:none'>")
-                $('.memotext').css({
-                    "background-color": "khaki",
-                    "border": "none"
-                });
-                $(this).find('.memotext').keydown(autoResizeTextArea)
-                       .focus();
-                $(this).children().children().next().css('display','none');
-                $(this).focusout(memoOutResize);
-                Event.preventDefault();
-                // ¿Ã ¿Ã∫•∆Æ¥¬ ∫Œ∏∞¥√º∑Œ ¿¸∆ƒµ«∏È æ»µ«π«∑Œ preventΩ√≈¥
-                }
-            
-            }
-
-        function adjustMemoboxzindex(e){
-            var memoboxAll = $('.memobox');
-
-            memoboxAll.each(function(index, e){
-                if ($(this).not($(memoboxAll[index]))){
-                    var zidEach = $(memoboxAll[index]).css("z-index");
-                    $(memoboxAll[index]).css("z-index", zidEach-1);
-                    } // if end
-                })// each end
-            }// function end
-
-        function bringFront(e){
-            $(this).css("z-index", 1000);
-        }
-
-        function memoOutResize(e){
-                var memotextSelector = $(this).find('.memotext');
-                var text = memotextSelector.val();
-                console.log(text);
-                if (text.length > 5){
-                var cutText = text.substring(0,5) + "...";
-                    memotextSelector.val(cutText)
-                                    .prop('rows', 2);
-                    console.log(cutText);
-                } else {
-                    memotextSelector.val(text);
-                }
-                $(this).before().find('form').children().css("display", "none");
-                $(this).parent().find('.memobox').css({"width" : 200, "height" : 130});
-                e.preventDefault();
-            }
-        
-        // ∏ﬁ∏ ≥ªø° √ﬂ∞°«— textarea ≈©±‚øÕ ∏ﬁ∏¿Â ≈©±‚∏¶ ∏ﬁ∏ ≥ªøÎø° ∏¬√Á ¿⁄µø¿∏∑Œ ¥√∑¡¡÷∞≈≥™ ¡Ÿø©¡÷¥¬ «‘ºˆ
-        function autoResizeTextArea() {
-                var NumberOfEnters = $(this).val().split("\n").length + 1;
-                if (NumberOfEnters == 1) {
-                    $(this).attr('rows', 2)
-                } else {
-                    $(this).attr('rows', NumberOfEnters)
-                }
-
-                var textAreaHeight = $(this).height();
-                var memotopHeight = $('.memo-top').height();
-                var memoboxHeight = $(this).parent().height();
-
-                if (textAreaHeight + memotopHeight + 40 > memoboxHeight) {
-                    $(this).parent().css("height", textAreaHeight + memotopHeight + 40)
-                } else if (textAreaHeight < memoboxHeight && memoboxHeight >= 348) {
-                    $(this).parent().css("height", textAreaHeight + memotopHeight + 60)
-                }
-            }
-
-        function lockEventAdd() {
-            $(this).css('cursor', 'pointer');
-            if ($(this).text().search('open') == 5)
-                $(this).text('lock');
-                //$.ajax µÈæÓ∞°æﬂ «‘ (lockAdd)
-            else
-                $(this).text('lock_open');
-                //$.ajax µÈæÓ∞°æﬂ «‘ (lockDelete)
-        }
-
-        function favoEventAdd() {
-            $(this).css('cursor', 'pointer');
-            if ($(this).css('color') == "rgb(33, 37, 41)") {
-                $(this).addClass('onFavo');
-                //$.ajax µÈæÓ∞°æﬂ «‘ (favoAdd ∞∞¿∫?)
-            } else if ($(this).css('color') == "rgb(250, 128, 114)") {
-                $(this).removeClass('onFavo');
-                //$.ajax µÈæÓ∞°æﬂ «‘ (favoDelete ∞∞¿∫)
-            }
-        }
-
-        function deleteEventAdd(e) {
-                $(this).css('cursor', 'pointer');
-               // $(this).parent().parent().parent().css('display', 'none');
-               // -> ¿Ã πÊΩƒ¿∏∑Œ¥¬ º˚±‚±‚∏∏ «‘ ªË¡¶¥¬ remove∏¶ ªÁøÎ«ÿæﬂ «‘
-                $(this).parent().parent().parent().remove();
-                // ∫Œ∏ ∞¥√º±Ó¡ˆ ¿Ã∫•∆Æ∞° Ω««‡µ«¡ˆ æ µµ∑œ ∏∑¿Ω
-                e.preventDefault();
-                /* $.ajax({
-                    memoMoveToTrash or memoDelete
-                })*/
-            }
-
-        function recomCloseEventAdd() {
-            $(this).css('cursor', 'pointer');
-            var recommend = $(this).parent();
-            recommend.css("display", "none");
-        }
-    })
-    </script>
+<link href="resources/css/WeMo_Main_CSS.css" rel="stylesheet">
+<script src="resources/js/WeMo_Main_Functions.js"></script>
 </head>
 
 <body>
-    <nav>
-        <table class="table navTable">
-            <tbody>
-                <tr class="first-row">
-                    <td>WeMo</td>
-                    <td class="bg-primary">∞¯∫Œ</td>
-                    <td class="bg-warning">øÓµø</td>
-                    <td class="bg-success">∞°∞Ë∫Œ</td>
-                    <td class="bg-danger">ƒ∂∏∞¥ı</td>
-                    <td class="bg-secondary">∫∏∞¸µ» ∏ﬁ∏</td>
-                    <td class="bg-dark trash">»ﬁ¡ˆ≈Î</td>
-                    <td class="bg-info">≈Î∞Ë</td>
-                    <td class="bg-search">
-                        <span class="material-icons float-right" style = "line-height: 24pt;">search<span>&nbsp;
-                        <span><input type = "text" class = "search_input float-right"></span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </nav>
-    <!-- ∏ﬁ∏¿Â ƒ¡≈◊¿Ã≥  Ω√¿€ -->
-    <div class="memoContainer">
-        <!-- ƒ¡≈◊¿Ã≥  ≥ª √ππ¯¬∞ ∏ﬁ∏π⁄Ω∫ -->
-        <!-- ∏ﬁ∏π⁄Ω∫¿« ¿ßƒ° ¡ˆ¡§¿∫ ø©±‚º≠ style∑Œ ¡÷∏È ¿ßƒ°∞° ¡ˆ¡§µ  øπΩ√ °È -->
-        <div class='container memobox shadow-sm' style = "position: absolute; left: 5px; top: 80px; z-index: 120">
-            <form>
-                <!-- ∏ﬁ∏π⁄Ω∫ ªÛ¥‹ ∏ﬁ¥∫(≥Ø¬•, ƒ´≈◊∞Ì∏Æ, æ∆¿Ãƒ‹µÈ) -->
-                <div class='container memo-top'>
-                    <span class="date"></span>
-                    <span class="section-name">∞¯∫Œ</span>
-                    <span class="material-icons delete float-right">delete</span>
-                    <span class='material-icons float-right favorites'>stars</span>
-                    <span class="material-icons float-right lock">lock_open</span>
-                </div>
-                <!-- ∏ﬁ∏π⁄Ω∫ ≥ª √ﬂ√µªÛ¿⁄ -->
-                <div class='container recommend'>
-                    <span>»§Ω√ ∏ﬁ∏¿« ≥ªøÎ¿Ã ¿Ã∞Õ¿Œ∞°ø‰?</span>
-                    <span class='material-icons close'> close </span>
-                    <br>
-                    <button type=button class='btn btn-outline-warning tel'>¿¸»≠π¯»£</button>
-                    &nbsp;
-                    <button type=button class='btn btn-outline-warning todo'>«“ ¿œ</button>
-                    <button type=button class='btn btn-outline-warning homework'>º˜¡¶</button>
-                    <button type=button class='btn btn-outline-warning meeting'>»∏¿« ¿œ¡§</button>
-                </div>
-                <!-- ∏ﬁ∏π⁄Ω∫ ≥ª ∏ﬁ∏ ƒ¡≈Ÿ√˜ -->
-                <div class='container memoContent'>
-                <!-- ¿Ã ¿⁄∏Æø° textarea ª¿‘µ  -->
-                </div>
-            </form>
-        </div>
+	<span style="display: none" id="USER_EMAIL">${USER_EMAIL }</span>
+	<span style="display: none" id="MEMO_SUB">${MEMO_SUB }</span>
+	<nav>
+		<table class="table navTable">
+			<tbody>
+				<tr class="first-row">
+					<td><img src="resources/image/Wemo.png" width="100px"></td>
+					<td class="bg-primary">Í≥µÎ∂Ä</td>
+					<td class="bg-warning">Ïö¥Îèô</td>
+					<td class="bg-success">Í∞ÄÍ≥ÑÎ∂Ä</td>
+					<td class="bg-danger">Ï∫òÎ¶∞Îçî</td>
+					<td class="bg-secondary">Î≥¥Í¥ÄÌï®</td>
+					<td class="bg-dark trash">Ìú¥ÏßÄÌÜµ</td>
+					<td class="bg-info">ÌÜµÍ≥Ñ</td>
+					<td class="bg-search"> 
+							<span class="material-icons float-right search-icon" style='line-height:"24pt";'>search</span>
+							<span><input type="text" name="SearchMemo" class="search_input float-right">&nbsp;&nbsp;</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</nav>
+	<!-- Î©îÎ™®Ïû• Ïª®ÌÖåÏù¥ÎÑà ÏãúÏûë -->
+	<div class="memoContainer">
+		<c:set var="Memolist" value="${Memolist }" />
 
-        <div class='container memobox shadow-sm' style = "position: absolute; left: 352px; top: 92px; z-index: 13">
-            <form>
-                <div class='container memo-top'>
-                    <span class="date"></span>
-                    <span class="section-name">øÓµø</span>
-                    <span class='material-icons delete float-right'>delete</span>
-                    <span class='material-icons float-right favorites'>stars</span>
-                    <span class="material-icons float-right lock">lock_open</span>
-                </div>
-                <div class='container recommend'>
-                    <span>»§Ω√ ∏ﬁ∏¿« ≥ªøÎ¿Ã ¿Ã∞Õ¿Œ∞°ø‰?</span>
-                    <span class='material-icons close'> close </span>
-                    <br>
-                    <button type=button class='btn btn-outline-warning tel'>¿¸»≠π¯»£</button>
-                    &nbsp;
-                    <button type=button class='btn btn-outline-warning todo'>«“ ¿œ</button>
-                    <button type=button class='btn btn-outline-warning homework'>º˜¡¶</button>
-                    <button type=button class='btn btn-outline-warning meeting'>»∏¿« ¿œ¡§</button>
-                </div>
-                <div class='container memoContent'>
 
-                </div>
-            </form>
-        </div>
+		<!-- Ïª®ÌÖåÏù¥ÎÑà ÎÇ¥ Ï≤´Î≤àÏß∏ Î©îÎ™®Î∞ïÏä§ -->
+		<!-- Î©îÎ™®Î∞ïÏä§Ïùò ÏúÑÏπò ÏßÄÏ†ïÏùÄ Ïó¨Í∏∞ÏÑú styleÎ°ú Ï£ºÎ©¥ ÏúÑÏπòÍ∞Ä ÏßÄÏ†ïÎê® ÏòàÏãú ‚Üì -->
+		<c:forEach var="Memolist" items="${Memolist }">
+			<div class='container memobox shadow-sm'
+				style="position: ${Memolist.MEMO_POSITION };
+        	 		  top: ${Memolist.MEMO_TOP };  
+        	 		  left: ${Memolist.MEMO_LEFT };
+        	 		  width : ${Memolist.MEMO_WIDTH };
+        	 		  height : ${Memolist.MEMO_HEIGHT }; 
+        	 		  background-color: ${Memolist.MEMO_COLOR };
+        	 		  z-index: ${Memolist.MEMO_ZID };">
+				<form>
+					<!-- Î©îÎ™®Î∞ïÏä§ ÏÉÅÎã® Î©îÎâ¥(ÎÇ†Ïßú, Ïπ¥ÌÖåÍ≥†Î¶¨, ÏïÑÏù¥ÏΩòÎì§) -->
+					<div class='container memo-top'>
+						<input type="hidden" class="MEMO_NUM" name="MEMO_NUM"
+							value="${Memolist.MEMO_NUM }"> <span class="MEMO_DATE">${Memolist.MEMO_DATE }</span>
+						<c:choose>
+							<c:when test="${Memolist.MEMO_SUB eq 'STUDY'}">
+								<span class="section-name">Í≥µÎ∂Ä</span>
+							</c:when>
+							<c:when test="${Memolist.MEMO_SUB eq 'HEALTH'}">
+								<span class="section-name">Ïö¥Îèô</span>
+							</c:when>
+							<c:when test="${Memolist.MEMO_SUB eq 'MONEY'}">
+								<span class="section-name">Í∞ÄÍ≥ÑÎ∂Ä</span>
+							</c:when>
+						</c:choose>
+						<span class="material-icons delete float-right">delete</span>
+						<c:if test="${Memolist.MEMO_FAV eq 'Y' }">
+							<span class='material-icons float-right favorites'
+								style='color: salmon'>stars</span>
+						</c:if>
+						<c:if test="${Memolist.MEMO_FAV eq 'N' }">
+							<span class='material-icons float-right favorites'>stars</span>
+						</c:if>
+						<c:if test="${Memolist.MEMO_LOC eq 'Y' }">
+							<span class="material-icons float-right lock">lock</span>
+						</c:if>
+						<c:if test="${Memolist.MEMO_LOC eq 'N' }">
+							<span class="material-icons float-right lock">lock_open</span>
+						</c:if>
+					</div>
+					<!-- Î©îÎ™®Î∞ïÏä§ ÎÇ¥ Î©îÎ™® Ïª®ÌÖêÏ∏† -->
+					<div class='container memoContent'>
+						<textarea class='memotext form-control'
+							style="overflow-y:hidden; 
+                		  		   resize:none; 
+                		  		   background-color: ${Memolist.MEMO_COLOR }; 
+                		  		   border: none">${Memolist.MEMO_TEX }</textarea>
+					</div>
+				</form>
+			</div>
+		</c:forEach>
+	</div>
+	<!-- Modal -->
+	<div id="Modal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title float-left">Î©îÎ™® Í≤ÄÏÉâ Í≤∞Í≥º</h4>
+					<h5>ÎàÑÎ•¥Î©¥ Ìï¥Îãπ Î©îÎ™®Î°ú Ïù¥Îèô</h5>
+				</div>
+				<table class="modal-body">
 
-        <div class='container memobox shadow-sm' style = "position: absolute; left: 85px; top: 852px; z-index: 140">
-            <form>
-                <div class='container memo-top'>
-                    <span class="date"></span>
-                    <span class="section-name">∞°∞Ë∫Œ</span>
-                    <span class="material-icons delete float-right">delete</span>
-                    <span class='material-icons float-right favorites'>stars</span>
-                    <span class="material-icons float-right lock">lock_open</span>
-                </div>
-                <div class='container recommend'>
-                    <span>»§Ω√ ∏ﬁ∏¿« ≥ªøÎ¿Ã ¿Ã∞Õ¿Œ∞°ø‰?</span>
-                    <span class='material-icons close'> close </span>
-
-                    <br>
-                    <button type=button class='btn btn-outline-warning tel'>¿¸»≠π¯»£</button>
-                    &nbsp;
-                    <button type=button class='btn btn-outline-warning todo'>«“ ¿œ</button>
-                    <button type=button class='btn btn-outline-warning homework'>º˜¡¶</button>
-                    <button type=button class='btn btn-outline-warning meeting'>»∏¿« ¿œ¡§</button>
-                </div>
-                <div class='container memoContent'>
-
-                </div>
-            </form>
-        </div>
-    </div>
-    
+				</table>
+			</div>
+		</div>
+	</div>
 </body>
 
 </html>

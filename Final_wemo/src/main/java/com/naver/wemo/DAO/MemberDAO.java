@@ -8,25 +8,28 @@ import com.naver.wemo.domain.Member;
 
 @Repository
 public class MemberDAO {
+	
 	@Autowired
 	private SqlSessionTemplate sqlSession;
-	@Autowired
-	MemoDAO memodao;
 	
-	public void insertMember(Member member) {//첫 회원가입
-			System.out.println(member.getUSER_EMAIL());
-			System.out.println(member.getUSER_PASS());
-			member.setUSER_SUB("STUDY");
-			member.setAUTH_TYPE("NONE");
-			member.setUSER_NICK(member.getUSER_EMAIL());//처음 닉네임은 ID
-			member.setUSER_FORM("STUDY");
-			sqlSession.insert("Members.insert", member);//회원정보 입력
-			memodao.firstInsert(member);//처음 메모 입력				
+	public int insertMember(Member member) {
+			return sqlSession.insert("Members.insert", member);
 		}
-
 	
-	public Member isId(Member member) {
-		return sqlSession.selectOne("Members.idcheck",member);
+	public String idcheck(String USER_EMAIL) {
+		return sqlSession.selectOne("Members.idcheck", USER_EMAIL);
+	}
+	
+	public String isId(String USER_EMAIL) {
+		return sqlSession.selectOne("Members.isId", USER_EMAIL);
+	}
+
+	public Member getMemberDetail(String USER_EMAIL) {
+		return sqlSession.selectOne("Members.getMemberDetail", USER_EMAIL);
+	}
+
+	public int updateLastSection(Member member) {
+		return sqlSession.update("Members.updateLastSection", member);
 	}
 	
 }

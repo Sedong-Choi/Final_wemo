@@ -1,41 +1,74 @@
-/*
-	cmd Îì§Ïñ¥Í∞ÄÏÑú sys/1234 as sysdba ÏπòÍ≥† Îã§Ïùå ÌïòÎÇòÏî© Î≥µÏÇ¨ Î∂ôÏó¨ÎÑ£Í∏∞ ÌïòÏÑ∏Ïöî
-	GRANT CONNECT,RESOURCE,UNLIMITED TABLESPACE TO WEMOADMIN IDENTIFIED BY WEMOES;
-	ALTER USER WEMOADMIN DEFAULT TABLESPACE USERS;
-	ALTER USER WEMOADMIN TEMPORARY TABLESPACE TEMP; 
-*/
-
 drop table memo purge;
-drop table member purge;
-create table member(
-	USER_EMAIL varchar2(100) primary key,
-	USER_PASS varchar2(30)  not null,
-	USER_SUB varchar2(30),
-	AUTH_TYPE varchar2(100),
-	USER_NICK varchar2(30), /* ÎîîÌè¥Ìä∏Îäî ÏûêÎ∞îÏóêÏÑú ÏÑ§Ï†ï*/
-	USER_FORM varchar2(30) default 'STUDY'
-);
-
-create table memo(
-	USER_EMAIL varchar2(100) references member(USER_EMAIL),
-	MEMO_NUM number(20),
-	MEMO_SUB varchar2(30),
-	MEMO_POSITION varchar2(20) default('absolute'),
-	MEMO_TOP varchar2(20),
-	MEMO_LEFT varchar2(20),
-	MEMO_COLOR varchar2(20),
-	MEMO_ZIN number(20),
+drop table mmember purge;
+CREATE TABLE MEMBER(
+	USER_EMAIL VARCHAR2(100) PRIMARY KEY,
+	USER_PASS VARCHAR2(30),
+	AUTH_TYPE VARCHAR2(100) DEFAULT('WEMO'),
+	USER_NICK VARCHAR2(30),
+	USER_FORM1 CLOB DEFAULT('º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ'),
+	USER_FORM2 CLOB DEFAULT('º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ'),
+	USER_FORM3 CLOB DEFAULT('º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ'),
+	USER_SUB VARCHAR2(30) DEFAULT('STUDY')
+	)	
+	
+DROP TABLE MEMBER CASCADE Constraints;
+INSERT INTO MEMBER VALUES('g@gmail.com', '1234', 'WEMO', 'g@gmail.com', 'º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ', 'º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ', 'º≥¡§µ» ¿⁄µøøœº∫ ∆˚¿Ã æ¯Ω¿¥œ¥Ÿ', 'STUDY');
+INSERT INTO MEMBER VALUES('h@gmail.com', '1234', 'WEMO', 'h@gmail.com', 'No Form Now', 'STUDY');
+UPDATE MEMBER SET USER_SUB = 'WORKOUT' WHERE USER_EMAIL = 'g@gmail.com';
+DROP TABLE MEMO;
+CREATE TABLE MEMO(
+	USER_EMAIL VARCHAR2(100) REFERENCES MEMBER(USER_EMAIL),
+	MEMO_NUM NUMBER(20) PRIMARY KEY,
+	MEMO_SUB VARCHAR2(30) NOT NULL,
+	MEMO_POSITION VARCHAR2(20) DEFAULT('ABSOLUTE') NOT NULL,
+	MEMO_TOP VARCHAR2(20),
+	MEMO_LEFT VARCHAR2(20),
+	MEMO_COLOR VARCHAR2(20),
+	MEMO_WIDTH VARCHAR2(20),
+	MEMO_HEIGHT VARCHAR2(20),
+	MEMO_ZID NUMBER(20),
 	MEMO_TEX CLOB,
-	MEMO_DATE date not null,
-	MEMO_PRE date,
-	PREV_TEX CLOB,	
-	MEMO_FAV varchar2(3) default ('N'),
-	MEMO_LOC varchar2(3) default ('N')
+	MEMO_DATE VARCHAR2(10),
+	PREV_TEX CLOB,
+	MEMO_PRE VARCHAR2(10),
+	MEMO_FAV VARCHAR2(3) DEFAULT('N'),
+	MEMO_LOC VARCHAR2(3) DEFAULT('N'),
+	MEMO_TRA VARCHAR2(3) DEFAULT('N'),
+	MEMO_KEYW VARCHAR2(20)
 );
+DROP TABLE MEMO;
+SELECT * FROM MEMO;
+SELECT * FROM MEMBER;
+SELECT * FROM MEMO WHERE USER_EMAIL = 'g@gmail.com' AND MEMO_SUB = 'STUDY';
+SELECT * FROM MEMO WHERE USER_EMAIL = 'g@gmail.com' AND MEMO_SUB = 'STUDY' AND MEMO_NUM = (SELECT MAX(MEMO_NUM) FROM MEMO WHERE USER_EMAIL = 'g@gmail.com' AND MEMO_SUB = 'STUDY')
+DELETE FROM MEMO WHERE USER_EMAIL = 'g@gmail.com';
+SELECT USER_EMAIL, MEMO_NUM, MEMO_SUB, 
+			   MEMO_POSITION, MEMO_TOP, MEMO_LEFT, 
+			   MEMO_COLOR, MEMO_WIDTH, MEMO_HEIGHT, MEMO_ZID, 
+			   MEMO_TEX, TO_DATE(TRUNC(MEMO_DATE, 'DD'), 'YY-MM-DD') MEMO_DATE, 
+			   PREV_TEX, TO_DATE(TRUNC(MEMO_PRE, 'DD'), 'YY-MM-DD') MEMO_PRE, 
+			   MEMO_FAV, MEMO_LOC, MEMO_KEYW 
+		FROM MEMO 
+		WHERE USER_EMAIL = 'g@gmail.com' AND MEMO_SUB = 'STUDY'
+		ORDER BY MEMO_ZID DESC
+INSERT INTO MEMO VALUES('g@gmail.com', 4, 'MONEY', 'ABSOLUTE', '100px', '100px', 'khaki', '350px', '200px', 999, 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-15, 'YYYY-MM-DD'), 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-15, 'YYYY-MM-DD'), 'N', 'N', 'N', '¿·±› ≈∞øˆµÂ');
+INSERT INTO MEMO VALUES('g@gmail.com', 5, 'HEALTH', 'ABSOLUTE', '100px', '100px', 'khaki', '350px', '200px', 999, 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-16, 'YYYY-MM-DD'), 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-16, 'YYYY-MM-DD'), 'N', 'N', 'N', '¿·±› ≈∞øˆµÂ');
+INSERT INTO MEMO VALUES('g@gmail.com', 6, 'STUDY', 'ABSOLUTE', '100px', '100px', 'khaki', '350px', '200px', 999, 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-17, 'YYYY-MM-DD'), 'WeMoø° ø¿Ω≈∞Õ¿ª »Øøµ«’¥œ¥Ÿ', TO_CHAR(2020-07-17, 'YYYY-MM-DD'), 'N', 'N', 'N', '¿·±› ≈∞øˆµÂ');
 
-insert into member values('admin@admin.net','1','STUDY','NONE','admin','STUDY');
 
-select*from member;
-select*from memo;
-
-
+SELECT MEMO_SUB, COUNT(MEMO_SUB) CNT FROM MEMO WHERE USER_EMAIL = 'g@gmail.com' GROUP BY MEMO_SUB;
+UPDATE MEMO SET MEMO_ZID = MEMO_ZID-1 
+		WHERE USER_EMAIL = 'g@gmail.com'
+		  AND MEMO_SUB = 'STUDY' 
+		  AND MEMO_NUM != 1;
+		  
+SELECT TO_CHAR(SYSDATE, 'D') FROM DUAL;
+		  
+		  
+SELECT MEMO_DATE, TO_CHAR(TO_DATE(MEMO_DATE, 'yy-mm-dd'), 'DAY') DAY, COUNT(TO_CHAR(TO_DATE(MEMO_DATE, 'yy-mm-dd'), 'DAY')) COUNT 
+FROM MEMO 
+WHERE USER_EMAIL = 'g@gmail.com' 
+AND MEMO_DATE BETWEEN (SELECT MAX(TO_DATE(MEMO_DATE))-7 FROM MEMO WHERE USER_EMAIL = 'g@gmail.com') 
+				  AND (SELECT MAX(TO_DATE(MEMO_DATE)) FROM MEMO WHERE USER_EMAIL = 'g@gmail.com') 
+GROUP BY MEMO_DATE 
+ORDER BY MEMO_DATE;

@@ -4,15 +4,12 @@
 
 <configuration>
 	<typeAliases>
-		<typeAlias alias="member"	  type="com.naver.wemo.domain.Member"/>
+		<typeAlias alias="member"	type="com.naver.wemo.domain.Member"/>
 		<typeAlias alias="memo"	 	type="com.naver.wemo.domain.Memo"/>
-		
 	</typeAliases>
 	
 	<mappers>
 		<mapper resource="sql/Member.xml"/>
 		<mapper resource="sql/Memo.xml"/>
-		
-	
 	</mappers>
 </configuration>

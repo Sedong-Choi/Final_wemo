@@ -1,23 +1,41 @@
+/*2020-07-13 MemoBean�� MEMO_TRA(�����뿡 �ִ� �޸����� �ƴ����� �Ǻ��ϴ� �÷�)�� �߰�
+ * 
+ * */
+
 package com.naver.wemo.domain;
 
-import java.util.Date;
-
 public class Memo {
-	private String USER_EMAIL; 	//ID
-	private int MEMO_NUM;		//메모 넘버
-	private String MEMO_SUB;	//메모 주제
-	private String MEMO_POSITION;	//메모 위치(absolute, relative 등)
-	private String MEMO_TOP;	//메모 top 좌표
-	private String MEMO_LEFT;	//메모 left 좌표
-	private String MEMO_COLOR;	//메모 색깔
-	private int MEMO_ZIN;		//메모 z 위치
-	private String MEMO_TEX;	//메모 내용
-	private Date MEMO_DATE;		//메모 최초 작성일
-	private Date MEMO_PRE;		//메모 최종 수정일
-	private String PREV_TEX;	//이전 메모 내용
-	private String MEMO_FAV;	//메모 즐겨찾기 Y, N
-	private String MEMO_LOC;	//메모 잠금 Y, N
+	private String USER_EMAIL; 	
+	private int MEMO_NUM;		
+	private String MEMO_SUB;	
+	private String MEMO_POSITION;	
+	private String MEMO_TOP;	
+	private String MEMO_LEFT;	
+	private String MEMO_COLOR;	
+	private String MEMO_WIDTH;
+	private String MEMO_HEIGHT;
+	private int MEMO_ZID;		
+	private String MEMO_TEX;	
+	private String MEMO_DATE;		
+	private String MEMO_PRE;		
+	private String PREV_TEX;	
+	private String MEMO_FAV;	
+	private String MEMO_LOC;
+	private String MEMO_TRA;
+	private String MEMO_KEYW;
 	
+	public String getMEMO_TRA() {
+		return MEMO_TRA;
+	}
+	public void setMEMO_TRA(String mEMO_TRA) {
+		MEMO_TRA = mEMO_TRA;
+	}
+	public String getMEMO_KEYW() {
+		return MEMO_KEYW;
+	}
+	public void setMEMO_KEYW(String mEMO_KEYW) {
+		MEMO_KEYW = mEMO_KEYW;
+	}
 	public String getUSER_EMAIL() {
 		return USER_EMAIL;
 	}
@@ -60,11 +78,23 @@ public class Memo {
 	public void setMEMO_COLOR(String mEMO_COLOR) {
 		MEMO_COLOR = mEMO_COLOR;
 	}
-	public int getMEMO_ZIN() {
-		return MEMO_ZIN;
+	public String getMEMO_WIDTH() {
+		return MEMO_WIDTH;
 	}
-	public void setMEMO_ZIN(int mEMO_ZIN) {
-		MEMO_ZIN = mEMO_ZIN;
+	public void setMEMO_WIDTH(String mEMO_WIDTH) {
+		MEMO_WIDTH = mEMO_WIDTH;
+	}
+	public String getMEMO_HEIGHT() {
+		return MEMO_HEIGHT;
+	}
+	public void setMEMO_HEIGHT(String mEMO_HEIGHT) {
+		MEMO_HEIGHT = mEMO_HEIGHT;
+	}
+	public int getMEMO_ZID() {
+		return MEMO_ZID;
+	}
+	public void setMEMO_ZID(int mEMO_ZID) {
+		MEMO_ZID = mEMO_ZID;
 	}
 	public String getMEMO_TEX() {
 		return MEMO_TEX;
@@ -72,16 +102,16 @@ public class Memo {
 	public void setMEMO_TEX(String mEMO_TEX) {
 		MEMO_TEX = mEMO_TEX;
 	}
-	public Date getMEMO_DATE() {
+	public String getMEMO_DATE() {
 		return MEMO_DATE;
 	}
-	public void setMEMO_DATE(Date mEMO_DATE) {
+	public void setMEMO_DATE(String mEMO_DATE) {
 		MEMO_DATE = mEMO_DATE;
 	}
-	public Date getMEMO_PRE() {
+	public String getMEMO_PRE() {
 		return MEMO_PRE;
 	}
-	public void setMEMO_PRE(Date mEMO_PRE) {
+	public void setMEMO_PRE(String mEMO_PRE) {
 		MEMO_PRE = mEMO_PRE;
 	}
 	public String getPREV_TEX() {
