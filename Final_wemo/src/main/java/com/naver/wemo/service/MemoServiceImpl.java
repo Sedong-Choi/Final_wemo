@@ -110,7 +110,7 @@ public class MemoServiceImpl implements MemoService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getCountSectionlist(String USER_EMAIL) {
+	public Map<String, Object> getCountSectionlist(String USER_EMAIL) {
 		System.out.println("MemoServiceImpl에서 getCountSectionlist()실행");
 		return memodao.getCountSectionlist(USER_EMAIL);
 	}

@@ -59,7 +59,9 @@ function navbarResizingEvent(){
     	
     	var pageWidth = window.innerWidth;
         $('.memobox').resizable({
-            maxWidth: pageWidth
+            maxWidth: pageWidth,
+            minWidth: 185,
+            minHeight: 140
         })
         
         if(pageWidth > 900){
@@ -91,29 +93,33 @@ function navbarResizingEvent(){
         	
             var mobileNav = '<table class="table navTable"><thead>'
                           + '<tr class="mobile-row">'
-                          + '<td><img src = "resources/image/Wemo.png" width = "100px"></td><td></td><td>'
-                          + '<span class="togglebtn material-icons float-right">list</span></td></tr></thead>'
-                          + '<tbody id = "mobile-tbody">'
+                          + '<td style ="width:15%"><img src = "resources/image/Wemo.png" width = "100px"></td>'
+                          + '<td><span class="material-icons float-right search-icon" style = "line-height:24pt;">search<span>&nbsp;'
+                          + '<input type = "text" class = "search_input float-right"></td>'
+                          + '<td style="width:5%"><span class="togglebtn material-icons float-right">list</span></td></tr></thead>'
+                          + '<tbody id ="mobile-tbody">'
                           + '<tr class="mobile-row">'
-                          + '<td class="bg-primary">공부</td>'
-                          + '<td class="bg-warning">운동</td>'
-                          + '<td class="bg-success">가계부</td></tr>'
+                          + '<td colspan = "2"></td><td class="bg-primary" style="width:5%">공부</td></tr>'
                           + '<tr class="mobile-row">'
-                          + '<td class="bg-danger">캘린더</td>'
-                          + '<td class="bg-secondary">보관함</td>'
-                          + '<td class="bg-dark trash">휴지통</td></tr>'
+                          + '<td colspan = "2"></td><td class="bg-warning" style="width:5%">운동</td></tr>'
                           + '<tr class="mobile-row">'
-                          + '<td class="bg-info">통계</td>'
-                          + '<td class="bg-search" colspan = "2">'
-                          + '<span class="material-icons float-right search-icon"'
-                          + ' style = "line-height: 24pt;">search<span>&nbsp;'
-                          + '<input type = "text" class = "search_input float-right"></td></tr></tbody></table>'
+                          + '<td colspan = "2"></td><td class="bg-success" style="width:5%">가계부</td></tr>'
+                          + '<tr class="mobile-row">'
+                          + '<td colspan = "2"></td><td class="bg-danger" style="width:5%">캘린더</td></tr>'
+                          + '<tr class="mobile-row">'
+                          + '<td colspan = "2"></td><td class="bg-secondary" style="width:5%">보관함</td></tr>'
+                          + '<tr class="mobile-row">'
+                          + '<td colspan = "2"></td><td class="bg-dark trash" style="width:5%">휴지통</td></tr>'
+                          + '<tr class="mobile-row">'
+                          + '<td colspan = "2"></td><td class="bg-info" style="width:5%">통계</td></tr></tbody></table>';
+                       
             $('nav').html(mobileNav);
             $('.search-icon').on('click', addSearchMemoEvent);
             $('.togglebtn').on('click', function(){
             	$('#mobile-tbody').toggle('fast');
             })
             					  .css('cursor', 'pointer');
+            $('.mobile-row').css({'border-top' : '0px soild none', 'border-bottom' : '0px soild none'})
         }
     }
 
@@ -134,7 +140,8 @@ function addSectionChangeEvent(){
         $('#MEMO_SUB').text('MONEY');
      } else if(section_text == "휴지통"){
     	$('#MEMO_SUB').text('TRASH');
-    	var restoreIcon = "<span class='material-icons float-right restore'>restore</span>";
+    	var restoreIcon = "<span class='material-icons float-right restore' "
+    					+ "data-toggle='tooltip' title ='메모 복구'>restore</span>";
      } else if(section_text == "보관함"){
     	$('#MEMO_SUB').text('IMPORTANT');
      } else if(section_text == "통계"){
@@ -156,31 +163,39 @@ function addSectionChangeEvent(){
     	data : memoObj,
     	success : function(rdata) {
     		$('.memoContainer').empty();
-    	
+    		console.log(rdata);
 	    		$.each(rdata, function(index){
 	    		var Memolist = rdata[index];
 	    		
-	        		if(Memolist.MEMO_FAV == "N")
+	        		if(Memolist.MEMO_FAV == 'N'){
 	        			var favStyle = 'color:rgb(33, 37, 41)';
-	        		else if (Memolist.MEMO_FAV == 'Y') {
+	        			var favTitle = '메모 보관';
+	        		} else if (Memolist.MEMO_FAV == 'Y') {
 	        			var favStyle = 'color:rgb(250, 128, 114)';
+	        			var favTitle = '보관 해제';
 	        			section_text = sectionTranslateENtoKR(Memolist.MEMO_SUB);
 	        		}
 	        		
 	        		if (Memolist.MEMO_TRA == "Y"){
+	        			var traTitle = '완전 삭제';
 	        			section_text = sectionTranslateENtoKR(Memolist.MEMO_SUB);
+	        		} else if (Memolist.MEMO_TRA == 'N') {
+	        			var traTitle = '휴지통으로';
 	        		}
 	        		
-	        		if(Memolist.MEMO_LOC == "N")
+	        		if(Memolist.MEMO_LOC == "N"){
 	        			var locText = 'lock_open';
-	        		else
+	        			var locTitle = '메모 잠금';
+	        		} else {
 	        			var locText = 'lock';
+	        			var locTitle = '잠금 해제';
+	        		}
 	        		
-	        		if (typeof Memolist.MEMO_TEX == undefined)
+	        		if (typeof Memolist.MEMO_TEX == undefined){
 	        			MEMO_TEX = "";
-	        		else 
+	        		} else { 
 	        			MEMO_TEX = Memolist.MEMO_TEX;
-	        		
+	        		}
 	    		var memoboxCreate 
 	    			= "<div class='container memobox shadow-sm' "
 	    	        + "style = 'position:"+Memolist.MEMO_POSITION+"; top:"+Memolist.MEMO_TOP+"; "  
@@ -190,10 +205,13 @@ function addSectionChangeEvent(){
 	    	        + "<input type='hidden' class='MEMO_NUM' name='MEMO_NUM' value='"+Memolist.MEMO_NUM+"'>"
 	    	        + "<span class='MEMO_DATE'>"+Memolist.MEMO_DATE+"</span>"
 	    	        + "<span class='section-name'> "+section_text+"</span>"
-	    	        + "<span class='material-icons delete float-right'>delete</span>"
+	    	        + "<span class='material-icons float-right delete' "
+	    	        + "data-toggle='tooltip' title ='"+traTitle+"'>delete</span>"
 	    	        + restoreIcon
-	    	        + "<span class='material-icons float-right favorites' style = '"+favStyle+"'>stars</span>"
-	    	        + "<span class='material-icons float-right lock'>"+locText+"</span></div>"
+	    	        + "<span class='material-icons float-right favorites' "
+	    	        + "data-toggle='tooltip' title ='"+favTitle+"' style='"+favStyle+"'>stars</span>"
+	    	        + "<span class='material-icons float-right lock' "
+	    	        + "data-toggle='tooltip' title ='"+locTitle+"'>"+locText+"</span></div>"
 	    	        + "<div class='container memoContent'><textarea class = 'memotext form-control' "
 	    	        + "style = 'overflow-y:hidden; resize:none; background-color:" + Memolist.MEMO_COLOR
 	    	        + "; border: none'>"+MEMO_TEX+"</textarea></div></form></div>";
@@ -205,6 +223,7 @@ function addSectionChangeEvent(){
 	    		$('.favorites').on('click', favoEventAdd);
 	    		$('.delete').on('click', deleteEventAdd);
 	    		$('.restore').on('click', deleteEventAdd);
+	    		$("[data-toggle='tooltip']").tooltip();
 	    		$('.memotext').keydown(autoResizeTextArea);
 				$('.memobox').draggable()
 							 .resizable()
@@ -240,12 +259,12 @@ function drawChart() {
     		console.log("데이터 받음");
     		console.log(rdata);
     		
-    		studyCount = rdata[0].COUNT; 
-    		healthCount = rdata[1].COUNT; 
-    		moneyCount = rdata[2].COUNT;
-    		
     		$('.memoContainer').html('<div class = "container" id ="analysis"></div>');
     		$('.analysis').css({"height" : "600px", "width" : "600px"});
+    		
+    		studyCount = rdata.STUDY;
+    		healthCount = rdata.HEALTH; 
+    		moneyCount = rdata.MONEY;
     		
 			google.charts.load('current', {'packages' : ['corechart']});
 			google.charts.setOnLoadCallback(function(){
@@ -256,6 +275,13 @@ function drawChart() {
 					['운동', healthCount],
 					['가계부', moneyCount]
 				]);
+				
+				if (studyCount == 0 && healthCount == 0 && moneyCount == 0){
+	    			data = google.visualization.arrayToDataTable([
+	    				['주제', '메모 수'],
+	    				['메모를 작성해주세요', 1]
+	    				])
+				}
 				
 				var options = {'title' : '내가 작성한 메모들', 'width' : 600, 'height' : 600};
 				
@@ -296,9 +322,12 @@ function newMemoAppend(){
                         	   + "<input type = 'hidden' class= 'MEMO_NUM' name = 'MEMO_NUM' value = "+ rdata.MEMO_NUM +">"
                                + "<span class = 'MEMO_DATE'>" + rdata.MEMO_DATE + "</span>"
                                + "<span class = 'section-name'> " + section_translation + "</span>"
-                               + "<span class = 'material-icons delete float-right'>delete</span>"
-                               + "<span class = 'material-icons favorites float-right'>stars</span>"
-                               + "<span class = 'material-icons float-right lock'>lock_open</span></div>"
+                               + "<span class = 'material-icons delete float-right' "
+                               + "data-toggle='tooltip' title ='휴지통으로'>delete</span>"
+                               + "<span class = 'material-icons favorites float-right' "
+                               + "data-toggle='tooltip' title ='메모 보관'>stars</span>"
+                               + "<span class = 'material-icons float-right lock' "
+                               + "data-toggle='tooltip' title ='메모 잠금'>lock_open</span></div>"
                                + "<div class = 'container memoContent'></div></form></div>";
 			     $('.memoContainer').append(newMemobox);
 
@@ -479,12 +508,15 @@ function adjustMemoboxzindex(){
 /* lockEventAdd function */
 function lockEventAdd() {
     $(this).css('cursor', 'pointer');
-    if ($(this).text().search('open') == 5)
-        $(this).text('lock');
+    if ($(this).text().search('open') == 5){
+        $(this).text('lock')
+        	   .attr('title', '잠금 해제');
         //$.ajax 들어가야 함 (lockAdd)
-    else
-        $(this).text('lock_open');
+    } else{
+        $(this).text('lock_open')
+        	   .attr('title', '메모 잠금');
         //$.ajax 들어가야 함 (lockDelete)
+    }
 }
 
 /* favoEventAdd function */
@@ -493,9 +525,11 @@ function favoEventAdd() {
     $(this).css('cursor', 'pointer');
     if ($(this).css('color') == "rgb(33, 37, 41)") {
         $(this).css('color', 'rgb(250, 128, 114)')
+        	   .attr('title', '보관 해제');
         var fav = 'Y';
     } else if ($(this).css('color') == "rgb(250, 128, 114)") {
-        $(this).css('color', 'rgb(33, 37, 41)');
+        $(this).css('color', 'rgb(33, 37, 41)')
+        	   .attr('title', '메모 보관');
         var fav = 'N';
         if(sectionName == "IMPORTANT")
 		   mbxSelector.remove();
@@ -675,19 +709,22 @@ function addAllEventsOnPage(e){
 	
 	navbarAddEvent(); 
 	$(window).resize(navbarResizingEvent);
-	
-	 var firstRow = $('.first-row td');
-     $.each(firstRow, function(index){
-     	if(index != 8)
-     		$(firstRow[index]).on('click', addSectionChangeEvent);
-     })
+	var pageWidth = window.innerWidth;
+	var firstRow = $('.first-row td');
+    $.each(firstRow, function(index){
+    	if(index != 8)
+     	$(firstRow[index]).on('click', addSectionChangeEvent);
+    })
     $('.lock')        .on('click', lockEventAdd);
     $('.favorites')   .on('click', favoEventAdd);           
     $('.delete')      .on('click', deleteEventAdd);
+    $("[data-toggle='tooltip']").tooltip();
     
     $('.memobox').draggable()
 			     .resizable({
-			        minWidth: 200, maxWidth: 500, minHeight: 130
+			             maxWidth: pageWidth,
+			             minWidth: 185,
+			             minHeight: 140
 			     })
 			     .one('click', addTextArea)
 			     .mouseup(function(){

@@ -66,8 +66,8 @@ public class MemoDAO {
 		return sqlSession.update("Memoes.moveToTrashBackAndForth", memo);
 	}
 
-	public List<Map<String, Object>> getCountSectionlist(String USER_EMAIL) {
-		return sqlSession.selectList("Memoes.getCountSectionlist", USER_EMAIL);
+	public Map<String, Object> getCountSectionlist(String USER_EMAIL) {
+		return sqlSession.selectOne("Memoes.getCountSectionlist", USER_EMAIL);
 	}
 	
 }

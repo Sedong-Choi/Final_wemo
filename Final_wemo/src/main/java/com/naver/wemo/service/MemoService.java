@@ -21,7 +21,7 @@ public interface MemoService {
 	// 새로 메모를 등록하거나 메모를 드래그 했다 뗐을 때 해당 메모를 제외한 나머지 메모의 z-index값을 변경
 	public int getCountMemolist(Memo memo);
 	// 메모의 개수 구하기
-	public List<Map<String, Object>> getCountSectionlist(String USER_EMAIL);
+	public Map<String, Object> getCountSectionlist(String USER_EMAIL);
 	public boolean setMemoLock(Memo memo);
 	public boolean updateMemoFavorite(Memo memo);
 	public boolean moveToTrashBackAndForth(Memo memo);

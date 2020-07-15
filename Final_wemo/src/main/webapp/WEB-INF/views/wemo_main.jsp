@@ -89,19 +89,19 @@
 								<span class="section-name">가계부</span>
 							</c:when>
 						</c:choose>
-						<span class="material-icons delete float-right">delete</span>
+						<span class="material-icons delete float-right" data-toggle = "tooltip" title = "휴지통으로">delete</span>
 						<c:if test="${Memolist.MEMO_FAV eq 'Y' }">
 							<span class='material-icons float-right favorites'
-								style='color: salmon'>stars</span>
+								style='color: salmon' data-toggle = "tooltip" title = "보관 해제">stars</span>
 						</c:if>
 						<c:if test="${Memolist.MEMO_FAV eq 'N' }">
-							<span class='material-icons float-right favorites'>stars</span>
+							<span class='material-icons float-right favorites' data-toggle = "tooltip" title = "메모 보관">stars</span>
 						</c:if>
 						<c:if test="${Memolist.MEMO_LOC eq 'Y' }">
-							<span class="material-icons float-right lock">lock</span>
+							<span class="material-icons float-right lock" data-toggle = "tooltip" title = "잠금 해제">lock</span>
 						</c:if>
 						<c:if test="${Memolist.MEMO_LOC eq 'N' }">
-							<span class="material-icons float-right lock">lock_open</span>
+							<span class="material-icons float-right lock" data-toggle = "tooltip" title = "메모 잠금">lock_open</span>
 						</c:if>
 					</div>
 					<!-- 메모박스 내 메모 컨텐츠 -->

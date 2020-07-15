@@ -3,7 +3,6 @@ package com.naver.wemo.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -177,11 +176,11 @@ public class MemoController {
 		try {
 			resp.setCharacterEncoding("UTF-8");
 			out = resp.getWriter();
-			List<Map<String, Object>> cntListMap = null;
+			Map<String, Object> cntMap = null;
 			if (memoObj.getMEMO_SUB().equals("ANALYSIS")) {
-				cntListMap = mService.getCountSectionlist(memoObj.getUSER_EMAIL());
-				if (cntListMap != null)
-					out.println(new Gson().toJson(cntListMap));
+				cntMap = mService.getCountSectionlist(memoObj.getUSER_EMAIL());
+				if (cntMap != null)
+					out.println(new Gson().toJson(cntMap));
 			} 
 		} catch (Exception e) { 
 			e.getStackTrace();

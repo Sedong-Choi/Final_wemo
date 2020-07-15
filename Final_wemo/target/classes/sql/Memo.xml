@@ -7,8 +7,9 @@
 <mapper namespace="Memoes">
 
 	<resultMap id = "SectionCountMap" type = "java.util.Map">
-		<result column = "MEMO_SUB" property = "MEMO_SUB"/>
-		<result column = "COUNT" property = "COUNT"/>
+		<result column = "STUDY" property = "STUDY"/>
+		<result column = "HEALTH" property = "HEALTH"/>
+		<result column = "MONEY" property = "MONEY"/>
 	</resultMap>
 	
 	<select id = "getMemoList" parameterType = "memo" resultType = "memo">
@@ -35,7 +36,10 @@
 		WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = #{MEMO_SUB} AND MEMO_TRA = 'N'
 	</select>
 	<select id = "getCountSectionlist" parameterType = "String" resultMap = "SectionCountMap">
-		 SELECT MEMO_SUB, COUNT(MEMO_SUB) COUNT FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} GROUP BY MEMO_SUB	 
+		 SELECT (SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'STUDY' AND MEMO_TRA = 'N') STUDY,
+	   			(SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'HEALTH' AND MEMO_TRA = 'N') HEALTH,
+	   			(SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'MONEY' AND MEMO_TRA = 'N') MONEY
+		 FROM DUAL	 
 	</select>
 	
 	<select id = "getLatestMemoInfo" parameterType = "memo" resultType = "memo">
