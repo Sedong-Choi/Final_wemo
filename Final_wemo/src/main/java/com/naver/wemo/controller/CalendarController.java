@@ -1,133 +1,153 @@
 package com.naver.wemo.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.naver.wemo.DAO.CalendarDAO;
-import com.naver.wemo.domain.Memo;
+import com.naver.wemo.domain.Calendarbean;
 
 @Controller
 public class CalendarController {
-	
-	@Autowired Memo memo;
-	 
-	@Autowired CalendarDAO calendardao; 
-	 
+
+	@Autowired
+	CalendarDAO calendardao;
+
 	@RequestMapping("/Calendar")
-	public String newCalendar() {
+	public String newCalendar(HttpServletRequest req, HttpSession session) {
+		String USER_EMAIL = req.getParameter("USER_EMAIL");
+		session.setAttribute("USER_EMAIL", USER_EMAIL);
 		return "Calendar";
 	}
-	
-	@RequestMapping("/CalendarWrite.net")
-	public String calendar_write(Memo memo) {
-		calendardao.insert(memo);
-		return "";
-	}
-	
-	@PostMapping("calendarDeleteAction.net")
-	public ModelAndView calendarDeleteAction(ModelAndView mv, HttpServletResponse response,
-			HttpServletRequest request,String USER_EMAIL, int num) throws Exception{
-		
-		int result = calendardao.calendarDelete(num);
-		
-		if(result == 0) {
-			System.out.println("ì‚­ì œ ì‹¤íŒ¨");
-			mv.setViewName("error/error");
-			mv.addObject("url", request.getRequestURL());
-			mv.addObject("message", "ì‚­ì œ ì‹¤íŒ¨");
-			return mv; 
-		}
-		
-		System.out.println("ì‚­ì œ ì„±ê³µ");
-		response.setContentType("text/html;charset=utf-8"); 
-		PrintWriter out = response.getWriter(); 
-		out.println("<script>"); 
-		out.println("alert('ì‚­ì œ ë˜ì—ˆìŠµë‹ˆë‹¤.');"); 
-		out.println("</script>");
-		out.close();
-		return null;
-	}
-	
-	@RequestMapping(value="/calendarupdate.net", method=RequestMethod.GET)
-	public void calendarupdate(Memo memo, HttpServletResponse response) 
-								throws Exception {
-		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		int result = calendardao.update(memo);
-		out.println("<script>");
-		// ì‚½ì…ì´ ëœ ê²½ìš°
-		   if (result == 1) {
-			   out.println("alert('ìˆ˜ì •ë˜ì—ˆìŠµë‹ˆë‹¤.');");
-		   } else {
-			   out.println("alert('ìˆ˜ì •ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.');");
-		   }
-		   out.println("</script>");
-		   out.close();
-	}
-	
-	@RequestMapping(value="/calendarREupdate.net", method=RequestMethod.GET)
-	public void calendarREupdate(Memo memo,HttpServletResponse response) throws Exception {
-		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		int result = calendardao.REupdate(memo);
-		out.println("<script>");
-		// ì‚½ì…ì´ ëœ ê²½ìš°
-		   if (result == 1) {
-			   out.println("alert('ìˆ˜ì •ë˜ì—ˆìŠµë‹ˆë‹¤.');");
-		   } else {
-			   out.println("alert('ìˆ˜ì •ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.');");
-		   }
-		   out.println("</script>");
-		   out.close();
-	}
-	
-	@RequestMapping(value="/calendarDGupdate.net", method=RequestMethod.GET)
-	public void calendarDGupdate(Memo memo,HttpServletResponse response) throws Exception {
-		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		int result = calendardao.DGupdate(memo);
-		out.println("<script>");
-		// ì‚½ì…ì´ ëœ ê²½ìš°
-		   if (result == 1) {
-			   out.println("alert('ìˆ˜ì •ë˜ì—ˆìŠµë‹ˆë‹¤.');");
-		   } else {
-			   out.println("alert('ìˆ˜ì •ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.');");
-		   }
-		   out.println("</script>");
-		   out.close();
-	}
-	
+
 	@ResponseBody
-	@RequestMapping(value = "/calendarListAjax.net")
-	public Map<String,Object> calendarListAjax(
-			@RequestParam(value="page", defaultValue="1", required=false) int page,
-			@RequestParam(value="limit", defaultValue="1000", required=false) int limit
-			)
-			{
-		int listcount = calendardao.getListCount();	// ì´ ë¦¬ìŠ¤íŠ¸  ìˆ˜ë¥¼ ë°›ì•„ì˜´.
+	@GetMapping("/CalendarWrite.net")
+	public void calendar_write(Calendarbean calendarbean, HttpServletResponse resp) throws Exception {
 		
-		List<Memo> calendarlist = calendardao.getcalendarList(page, limit); // ë¦¬ìŠ¤íŠ¸ ë°›ì•„ì˜´
-		
-		Map<String, Object> map = new HashMap<String,Object>();
-		map.put("page", page);
-		map.put("listcount", listcount);
-		map.put("calendarlist", calendarlist);
-		map.put("limit", limit);
-		return map;
+		resp.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		System.out.println(calendarbean.getStart());
+		try {
+			out = resp.getWriter();
+			System.out.println(calendarbean.isAllDay());
+			if(calendarbean.isAllDay()) {
+				calendarbean.setCALENDAR_ALLDAY("1");
+			} else {
+				calendarbean.setCALENDAR_ALLDAY("0");
+			}			
+			
+			if(calendardao.insert(calendarbean) > 0) {
+				out.println("success");
+			} else {
+				out.println("<script>alert('Ä¶¸°´õ¿¡ ÀÔ·ÂÇÏ´Â µµÁß¿¡ ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ¼¼¿ä.')</script>");
 			}
+			
+		} catch (Exception e) {  
+			e.printStackTrace();
+		} finally {
+			if (out != null)
+				out.close();
+		}
+	}
+
+	@GetMapping("/calendarDeleteAction.net")
+	public void calendarDeleteAction(Calendarbean calendarbean, HttpServletResponse resp, HttpServletRequest req) throws Exception {
+		
+		resp.setCharacterEncoding("utf-8");
+		PrintWriter out = null;
+		
+		try {
+			
+			out = resp.getWriter();
+			
+			if (calendardao.delete(calendarbean) > 0) {
+				out.println("delete calendar event success");
+			} else {
+				out.println("delete calendar event failed");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null)
+				out.close();
+		}
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value = { "/calendarupdate.net",
+							  "/calendarREupdate.net",
+							  "/calendarDGupdate.net" }, 
+					method = RequestMethod.GET)
+	public void calendarREupdate(Calendarbean calendarbean, HttpServletResponse response) throws Exception {
+		
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = null;
+		
+		try {
+			
+		out = response.getWriter();
+		
+		if (calendardao.update(calendarbean) > 0) {
+			out.print("calendar update success");
+		} else {
+			out.println("<script>alert('Ä¶¸°´õ¸¦ ¼öÁ¤ÇÏ´Â µµÁß¿¡ ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ¼¼¿ä.')</script>");
+		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(out != null)
+				out.close();
+		}
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/calendarListAjax.net", produces = "application/text;charset=utf-8", method = RequestMethod.POST)
+	public void calendarListAjax(Calendarbean CalObj, HttpServletResponse resp) {
+		
+		resp.setCharacterEncoding("UTF-8");
+		List<Calendarbean> list =null;
+		PrintWriter out = null;		
+		
+		try {
+			
+			out = resp.getWriter();
+			list = calendardao.getcalendarList(CalObj);
+			
+			for(Calendarbean calbean : list) {
+				if(calbean.getCALENDAR_ALLDAY().equals("Y")) 
+				   calbean.setAllDay(true);
+				else 
+				   calbean.setAllDay(false);				
+			}
+			
+			if (list != null) {
+				String jsonListObj = new Gson().toJson(list);
+				out.println(jsonListObj);
+				System.out.println("¸®½ºÆ® º¸³¿:" + jsonListObj);
+			} else {
+				out.print("<script>Ä¶¸°´õ¸¦ °¡Á®¿À´Â µ¥ ½ÇÆĞÇÏ¿´½À´Ï´Ù ´Ù½Ã ½ÃµµÇØÁÖ¼¼¿ä.</script>");
+			}
+			
+		} catch (IOException e) {
+	         e.printStackTrace();
+	    } finally {
+	    	if (out != null)
+	    		out.close();
+	    }
+
+	}
 }

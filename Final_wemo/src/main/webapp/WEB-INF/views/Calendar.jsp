@@ -6,28 +6,37 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>FullCalendar Example</title>
-    <link rel=" shortcut icon" href="image/favicon.ico">
+    <title>WeMo 캘린더</title>
 
     <link rel="stylesheet" href="resources/css/fullcalendar.min.css" />
-    <link rel="stylesheet" href="resources/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/css/bootstrap.min2.css" />
     <link rel="stylesheet" href='resources/css/select2.min.css' />
     <link rel="stylesheet" href='resources/css/bootstrap-datetimepicker.min.css' />
-
-    <link rel="stylesheet" href="resources/css/main.css">
+    <link rel="stylesheet" href="resources/css/main.css"/>
+    <link rel="stylesheet" href="resources/css/WeMo_Main_CSS.css"/>
+    <style>
+    .Cal-div {
+    	width : 80%;    
+    }
+    .btn-back{
+    	margin-left : 100px;
+    }
+    </style>
 </head>
 
 <body>
-    <div class="container">
+	<span style="display:none" id="USER_EMAIL">${USER_EMAIL }</span>
+ 	<button type = "button" class = "btn btn-outline-dark btn-back" onClick="history.back()">메모장으로 돌아가기</button>
+    <div class="container Cal-div">
+   
 
         <!-- 일자 클릭시 메뉴오픈 -->
         <div id="contextMenu" class="dropdown clearfix">
             <ul class="dropdown-menu dropNewEvent" role="menu" aria-labelledby="dropdownMenu"
                 style="display:block;position:static;margin-bottom:5px;">
-                <li><a tabindex="-1" href="#">카테고리1</a></li>
-                <li><a tabindex="-1" href="#">카테고리2</a></li>
-                <li><a tabindex="-1" href="#">카테고리3</a></li>
-                <li><a tabindex="-1" href="#">카테고리4</a></li>
+                <li><a tabindex="-1" href="#">공부</a></li>
+                <li><a tabindex="-1" href="#">운동</a></li>
+                <li><a tabindex="-1" href="#">가계부</a></li>
                 <li class="divider"></li>
                 <li><a tabindex="-1" href="#" data-role="close">Close</a></li>
             </ul>
@@ -40,7 +49,7 @@
 
 
         <!-- 일정 추가 MODAL -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="eventModal">
+        <div class="modal" tabindex="-1" role="dialog" id="eventModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -51,63 +60,58 @@
                     <div class="modal-body">
 
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-md-8">
                                 <label class="col-xs-4" for="edit-allDay">하루종일</label>
                                 <input class='allDayNewEvent' id="edit-allDay" type="checkbox" />
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-md-8">
                                 <label class="col-xs-4" for="edit-title">일정명</label>
                                 <input class="inputModal" type="text" name="edit-title" id="edit-title"
                                     required="required" />
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <label class="col-xs-4" for="edit-start">시작</label>
+                            <div class="col-md-8">
+                                <label class="col-xs-4" for="edit-start">시작 시간</label>
                                 <input class="inputModal" type="text" name="edit-start" id="edit-start" />
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <label class="col-xs-4" for="edit-end">끝</label>
+                            <div class="col-md-8">
+                                <label class="col-xs-4" for="edit-end">종료 시간</label>
                                 <input class="inputModal" type="text" name="edit-end" id="edit-end" />
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <label class="col-xs-4" for="edit-type">구분</label>
-                                <select class="inputModal" type="text" name="edit-type" id="edit-type">
-                                    <option value="카테고리1">카테고리1</option>
-                                    <option value="카테고리2">카테고리2</option>
-                                    <option value="카테고리3">카테고리3</option>
-                                    <option value="카테고리4">카테고리4</option>
+                            <div class="col-md-8">
+                                <label class="col-xs-4" for="MEMO_SUB">구분</label>
+                                <select class="inputModal" id="MEMO_SUB">
+                                    <option value="STUDY">공부</option>
+                                    <option value="HEALTH">운동</option>
+                                    <option value="MONEY">가계부</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-md-8">
                                 <label class="col-xs-4" for="edit-color">색상</label>
-                                <select class="inputModal" name="color" id="edit-color">
-                                    <option value="#D25565" style="color:#D25565;">빨간색</option>
-                                    <option value="#9775fa" style="color:#9775fa;">보라색</option>
-                                    <option value="#ffa94d" style="color:#ffa94d;">주황색</option>
-                                    <option value="#74c0fc" style="color:#74c0fc;">파란색</option>
-                                    <option value="#f06595" style="color:#f06595;">핑크색</option>
-                                    <option value="#63e6be" style="color:#63e6be;">연두색</option>
-                                    <option value="#a9e34b" style="color:#a9e34b;">초록색</option>
-                                    <option value="#4d638c" style="color:#4d638c;">남색</option>
-                                    <option value="#495057" style="color:#495057;">검정색</option>
+                                <select class="inputModal" name="edit-color" id="MEMO_COLOR">
+                                    <option value="#B6F2CB" style="color:#B6F2CB; font-weight:700">메모색1</option>
+                                    <option value="#C3F2B6" style="color:#C3F2B6; font-weight:700">메모색2</option>
+                                    <option value="#EBF2B6" style="color:#EBF2B6; font-weight:700">메모색3</option>
+                                    <option value="#F2D7B6" style="color:#F2D7B6; font-weight:700">메모색4</option>
+                                    <option value="#F2B6B6" style="color:#F2B6B6; font-weight:700">메모색5</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-md-8	">
                                 <label class="col-xs-4" for="edit-desc">설명</label>
                                 <textarea rows="4" cols="50" class="inputModal" name="edit-desc"
-                                    id="edit-desc"></textarea>
+                                    id="MEMO_TEX"></textarea>
                             </div>
                         </div>
                     </div>
@@ -131,29 +135,32 @@
             </div>
 
             <div class="panel-body">
+
                 <div class="col-lg-6">
-                    <label for="calendar_view">카테고리</label>
+                    <label for="calendar_view">구분별</label>
                     <div class="input-group">
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="공부"
-                                checked>공부</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="운동"
-                                checked>운동</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="가계부"
-                                checked>가계부</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="요리"
-                                checked>요리</label>
-                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="기타"
-                                checked>기타</label>
+                        <select class="filter" id="type_filter" multiple="multiple">
+                            <option value="공부">공부</option>
+                            <option value="운동">운동</option>
+                            <option value="가계부">가계부</option>
+                        </select>
                     </div>
                 </div>
 
+                <div class="col-lg-6">
+                    <label for="calendar_view">등록자별</label>
+                    <div class="input-group">
+                        <label class="checkbox-inline"><input class='filter' type="checkbox" value="${USER_EMAIL }"
+                                checked>${USER_EMAIL }</label>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /.filter panel -->
     </div>
     <!-- /.container -->
     <script src="resources/js/jquery.min.js"></script>
-    <script src="resources/js/bootstrap.min.js"></script>
+    <script src="resources/js/bootstrap.min2.js"></script>
     <script src="resources/js/moment.min.js"></script>
     <script src="resources/js/fullcalendar.min.js"></script>
     <script src="resources/js/ko.js"></script>
@@ -163,6 +170,7 @@
     <script src="resources/js/addEvent.js"></script>
     <script src="resources/js/editEvent.js"></script>
     <script src="resources/js/etcSetting.js"></script>
+    <script src="resources/js/WeMo_Main_Functions.js"></script>
     
 </body>
 

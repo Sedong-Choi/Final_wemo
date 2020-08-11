@@ -6,63 +6,132 @@
 
 <mapper namespace="Memoes">
 
+	<resultMap id = "SectionCountMap" type = "java.util.Map">
+		<result column = "STUDY" property = "STUDY"/>
+		<result column = "HEALTH" property = "HEALTH"/>
+		<result column = "MONEY" property = "MONEY"/>
+	</resultMap>
+	
+	<select id = "getMemoList" parameterType = "memo" resultType = "memo">
+		SELECT * FROM MEMO 
+		WHERE USER_EMAIL = #{USER_EMAIL} 
+		  AND MEMO_SUB = #{MEMO_SUB}
+		  AND MEMO_TRA = 'N' 
+		ORDER BY MEMO_ZID DESC
+	</select>
+	<select id = "getFavMemoList" parameterType = "memo" resultType = "memo">
+		SELECT * FROM MEMO
+		WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_FAV = 'Y' AND MEMO_TRA = 'N'
+	</select>
+	<select id = "getTraMemoList" parameterType = "memo" resultType = "memo">
+		SELECT * FROM MEMO
+		WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_TRA = 'Y'
+	</select>
+	<select id = "searchMemoList" parameterType = "memo" resultType = "memo">
+		SELECT * FROM MEMO
+		WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_TEX LIKE #{MEMO_TEX}
+	</select>
+	<select id = "getCountMemolist" parameterType = "memo" resultType = "int">
+		SELECT COUNT(*) FROM MEMO
+		WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = #{MEMO_SUB} AND MEMO_TRA = 'N'
+	</select>
+	<select id = "getCountSectionlist" parameterType = "String" resultMap = "SectionCountMap">
+		 SELECT (SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'STUDY' AND MEMO_TRA = 'N') STUDY,
+	   			(SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'HEALTH' AND MEMO_TRA = 'N') HEALTH,
+	   			(SELECT COUNT(MEMO_SUB) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = 'MONEY' AND MEMO_TRA = 'N') MONEY
+		 FROM DUAL	 
+	</select>
+	
+	<select id = "getLatestMemoInfo" parameterType = "memo" resultType = "memo">
+		SELECT * FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_SUB = #{MEMO_SUB} AND MEMO_NUM = (SELECT MAX(MEMO_NUM) FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL})
+	</select>
+	<select id = "getMemoContent" parameterType = "memo" resultType = "memo">
+		SELECT COALESCE(TO_CHAR(MEMO_TEX), '빈 메모') MEMO_TEX FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL} AND MEMO_NUM = #{MEMO_NUM}
+	</select>
 
-	<insert id="firstinsert" parameterType="memo">
-		<selectKey resultType="int"  order="BEFORE"
-			keyProperty="MEMO_NUM">
-			select nvl(max(MEMO_NUM),0)+1 from memo where USER_EMAIL=#{USER_EMAIL}
-			</selectKey>
-	insert into memo
-		values(#{USER_EMAIL},#{MEMO_NUM},#{MEMO_SUB},#{MEMO_POSITION},
-				#{MEMO_TOP},#{MEMO_LEFT},#{MEMO_COLOR},#{MEMO_ZIN},#{MEMO_WIDTH},#{MEMO_HEIGHT},
-				#{MEMO_TEX},sysdate,sysdate,#{MEMO_TEX},#{MEMO_FAV},#{MEMO_LOC})	
+	<insert id="memoForNewAccount" parameterType="String">
+	INSERT INTO MEMO VALUES(#{USER_EMAIL}, 1, 'STUDY', 'ABSOLUTE', '100px', '100px', 'khaki', '350px', '200px', 1000, 'WeMo에 오신것을 환영합니다', TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 'WeMo에 오신것을 환영합니다', TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 'N', 'N', 'N', '잠금 키워드')
+					<!-- USER_EMAIL, MEMO_NUM, MEMO_SUB, MEMO_POSITION, MEMO_TOP, MEMO_LEFT, MEMO_COLOR, MEMO_WIDTH, MEMO_HEIGHT, MEMO_ZID, MEMO_TEX, MEMO_DATE, MEMO_PRE, PREV_TEX, MEMO_FAV, MEMO_LOC, MEMO_TRA, MEMO_KEYW -->
 	</insert>
 	
-	<insert id="newinsert" parameterType="memo">
-		<selectKey resultType="int"  order="BEFORE"
-			keyProperty="MEMO_NUM">
-			select nvl(max(MEMO_NUM),0)+1 from memo where USER_EMAIL=#{USER_EMAIL}
-			</selectKey>			
-		insert into memo
-		values(#{USER_EMAIL},#{MEMO_NUM},#{MEMO_SUB},#{MEMO_POSITION},
-				#{MEMO_TOP},#{MEMO_LEFT},#{MEMO_COLOR},#{MEMO_ZIN},#{MEMO_WIDTH},#{MEMO_HEIGHT},
-				#{MEMO_TEX},sysdate,sysdate,#{PREV_TEX},#{MEMO_FAV},#{MEMO_LOC})	
+	<insert id="newMemo" parameterType="memo">
+		<selectKey resultType = "int" order = "BEFORE" keyProperty = "MEMO_NUM">
+			SELECT NVL(MAX(MEMO_NUM), 0)+1 FROM MEMO WHERE USER_EMAIL = #{USER_EMAIL}
+		</selectKey>
+	INSERT INTO MEMO VALUES(#{USER_EMAIL}, #{MEMO_NUM} , #{MEMO_SUB}, 'ABSOLUTE', '100px', '100px', 'khaki', '350px', '200px', 999, '새 메모', TO_CHAR(SYSDATE, 'YYYY-MM-DD'), '새 메모', TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 'N', 'N', 'N', '잠금 키워드')
+					<!-- USER_EMAIL, MEMO_NUM, MEMO_SUB, MEMO_POSITION, MEMO_TOP, MEMO_LEFT, MEMO_COLOR, MEMO_WIDTH, MEMO_HEIGHT, MEMO_ZID, MEMO_TEX, MEMO_DATE, MEMO_PRE, PREV_TEX, MEMO_FAV, MEMO_LOC, MEMO_TRA, MEMO_KEYW -->
 	</insert>
 	
-	
-	<update id="updatememo" parameterType="memo">
-		<selectKey resultType="string"  order="BEFORE"
-			keyProperty="MEMO_PRE">
-			select MEMO_TEX from memo where MEMO_NUM=#{MEMO_NUM}
-			</selectKey>
-		update memo
-		by 	MEMO_SUB=#{MEMO_SUB},MEMO_POSITION=#{MEMO_POSITION},
-			MEMO_TOP=#{MEMO_TOP},MEMO_LEFT=#{MEMO_LEFT},
-			MEMO_COLOR=#{MEMO_COLOR},MEMO_ZIN=#{MEMO_ZIN},
-			MEMO_TEX=#{MEMO_TEX},PREV_TEX=#{PREV_TEX},MEMO_PRE=sysdate,
-			MEMO_FAV=#{MEMO_FAV},MEMO_LOC=#{MEMO_LOC}			
-			where MEMO_NUM=#{MEMO_NUM}	
+	<update id = "adjustMemoboxzindex" parameterType = "memo">
+		UPDATE MEMO SET MEMO_ZID = MEMO_ZID-1 
+		WHERE USER_EMAIL = #{USER_EMAIL} 
+		  AND MEMO_SUB = #{MEMO_SUB} 
+		  AND MEMO_NUM != #{MEMO_NUM}
 	</update>
 	
+	<update id ="moveToTrashBackAndForth" parameterType = "memo">
+		UPDATE MEMO 
+		SET MEMO_TRA = #{MEMO_TRA} 
+		WHERE USER_EMAIL = #{USER_EMAIL} 
+		  AND MEMO_NUM = #{MEMO_NUM}
+	</update>
 	
+	<update id = "updateMemoFavorite" parameterType = "memo">
+		UPDATE MEMO 
+		SET MEMO_FAV = #{MEMO_FAV} 
+		WHERE USER_EMAIL = #{USER_EMAIL} 
+		  AND MEMO_NUM = #{MEMO_NUM}	
+	</update>
 	
-	<select id="selectstudy" parameterType="member" resultType="memo">
-		select * from memo
-			 where MEMO_SUB='STUDY' AND USER_EMAIL=#{USER_EMAIL}
-	</select>
+	<update id = "updateMemoLockAndUnlock" parameterType = "memo">
+		UPDATE MEMO
+		SET MEMO_LOC = #{MEMO_LOC},
+			MEMO_KEYW = #{MEMO_KEYW}
+		WHERE USER_EMAIL = #{USER_EMAIL}
+		  AND MEMO_NUM = #{MEMO_NUM}
+	</update>
+	<update id = "updateMemoColor" parameterType = "memo">
+		UPDATE MEMO
+		SET MEMO_COLOR = #{MEMO_COLOR}
+		WHERE USER_EMAIL = #{USER_EMAIL}
+		  AND MEMO_NUM = #{MEMO_NUM}
+	</update>
+	<update id = "saveMemoProperties" parameterType = "memo">
+		UPDATE MEMO 
+		SET MEMO_POSITION = #{MEMO_POSITION},
+			MEMO_TOP = #{MEMO_TOP},
+			MEMO_LEFT = #{MEMO_LEFT},
+			MEMO_COLOR = #{MEMO_COLOR},
+			MEMO_WIDTH = #{MEMO_WIDTH},
+			MEMO_HEIGHT = #{MEMO_HEIGHT},
+			MEMO_ZID = #{MEMO_ZID},
+			MEMO_TEX = #{MEMO_TEX},
+			MEMO_FAV = #{MEMO_FAV},
+			MEMO_DATE = #{MEMO_DATE},
+			MEMO_LOC = #{MEMO_LOC}
+		WHERE MEMO_NUM = #{MEMO_NUM} 
+		AND MEMO_SUB = #{MEMO_SUB} 
+		AND USER_EMAIL = #{USER_EMAIL}
+	</update>
 	
-	<select id="selctmoney"  parameterType="member" resultType="memo">
-		select * from memo
-			where MEMO_SUB='MONEY' AND USER_EMAIL=#{USER_EMAIL}
-	</select>
+	<update id = "saveListedMemoProperties" parameterType = "memo">
+		UPDATE MEMO 
+		SET MEMO_COLOR = #{MEMO_COLOR},
+			MEMO_ZID = #{MEMO_ZID},
+			MEMO_TEX = #{MEMO_TEX},
+			MEMO_DATE = #{MEMO_DATE},
+			MEMO_FAV = #{MEMO_FAV},
+			MEMO_LOC = #{MEMO_LOC}
+		WHERE MEMO_NUM = #{MEMO_NUM} 
+		AND MEMO_SUB = #{MEMO_SUB} 
+		AND USER_EMAIL = #{USER_EMAIL}	
+	</update>
 	
-	<select id="selcthealth"  parameterType="member" resultType="memo">
-		select * from memo
-			where MEMO_SUB='HEALTH' AND USER_EMAIL=#{USER_EMAIL}
-	</select>
-	
-	
-	
-	
+	<delete id = "deleteMemo" parameterType = "memo">
+		DELETE FROM MEMO
+		WHERE USER_EMAIL = #{USER_EMAIL}
+		AND MEMO_NUM = #{MEMO_NUM}
+		AND MEMO_TRA = 'Y'
+	</delete>
 	
 </mapper>

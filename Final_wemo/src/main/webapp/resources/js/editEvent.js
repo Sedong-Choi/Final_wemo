@@ -1,9 +1,10 @@
 /* ****************
  *  일정 편집
  * ************** */
+var gevent=""
 var editEvent = function (event, element, view) {
-
-    $('#deleteEvent').data('id', event._id); //클릭한 이벤트 ID
+   gevent=event
+    $('#deleteEvent').data('id', event.USER_EMAIL); //클릭한 이벤트 ID
 
     $('.popover.fade.top').remove();
     $(element).popover("hide");
@@ -19,17 +20,17 @@ var editEvent = function (event, element, view) {
     }
 
     if (event.allDay === true && event.end !== event.start) {
-        editEnd.val(moment(event.end).subtract(1, 'days').format('YYYY-MM-DD HH:mm'))
+        editEnd.val(moment(event.end).format('YYYY-MM-DD HH:mm'))
     } else {
-        editEnd.val(event.end.format('YYYY-MM-DD HH:mm'));
+       editEnd.val(moment(event.end).format('YYYY-MM-DD HH:mm'))
     }
 
     modalTitle.html('일정 수정');
     editTitle.val(event.title);
     editStart.val(event.start.format('YYYY-MM-DD HH:mm'));
-    editType.val(event.type);
-    editDesc.val(event.description);
-    editColor.val(event.backgroundColor).css('color', event.backgroundColor);
+    editType.val(event.MEMO_SUB);
+    editDesc.val(event.MEMO_TEX);
+    editColor.val(event.MEMO_COLOR).css('color', event.MEMO_COLOR);
 
     addBtnContainer.hide();
     modifyBtnContainer.show();
@@ -53,17 +54,21 @@ var editEvent = function (event, element, view) {
         var startDate;
         var endDate;
         var displayDate;
+        var USER_EMAIL = $('#USER_EMAIL').text();
 
         if (editAllDay.is(':checked')) {
             statusAllDay = true;
             startDate = moment(editStart.val()).format('YYYY-MM-DD');
-            endDate = moment(editEnd.val()).format('YYYY-MM-DD');
-            displayDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD');
+            endDate = moment(editEnd.val()).subtract(1, 'days').format('YYYY-MM-DD');
+            displayDate = moment(editEnd.val()).format('YYYY-MM-DD');
         } else {
             statusAllDay = false;
             startDate = editStart.val();
-            endDate = editEnd.val();
-            displayDate = endDate;
+            endDate = editEnd.val()
+               //moment(editEnd.val()).subtract(1, 'days').format('YYYY-MM-DD');
+            displayDate = moment(editEnd.val()).format('YYYY-MM-DD');
+            /*endDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD');
+            displayDate = endDate;*/
         }
 
         eventModal.modal('hide');
@@ -71,44 +76,65 @@ var editEvent = function (event, element, view) {
         event.allDay = statusAllDay;
         event.title = editTitle.val();
         event.start = startDate;
-        event.end = displayDate;
-        event.type = editType.val();
-        event.backgroundColor = editColor.val();
-        event.description = editDesc.val();
+        event.end = endDate;
+        event.MEMO_SUB = editType.val();
+        event.MEMO_COLOR = editColor.val();
+        event.MEMO_TEX = editDesc.val();
+       
+       var eventfix = {
+             USER_EMAIL : USER_EMAIL,
+             MEMO_SUB : editType.val(),
+             MEMO_TEX : editDesc.val(),
+             title : editTitle.val(),
+             start : Date.parse(editStart.val()),
+             end : Date.parse(editEnd.val()),
+             MEMO_COLOR : editColor.val(),
+             allDay: editAllDay.is(":checked"),
+             MEMO_NUM : event.MEMO_NUM
+       }
+       console.log("eventfix.start : " + eventfix.start + ", eventfix.end : " + eventfix.end)
+       $("#calendar").fullCalendar('updateEvent', event);
 
-        $("#calendar").fullCalendar('updateEvent', event);
-
-        //일정 업데이트
+       //일정 업데이트
         $.ajax({
             type: "get",
-            url: "calendarupdate.net",	//update
-            data: {
-                //...
-            },
+            url: "calendarupdate.net",   //update
+            data: eventfix,
+            /*dataType : "JSON",*/
             success: function (response) {
-                alert('수정되었습니다.')
+               //DB연동시 중복이벤트 방지를 위한
+               $('#calendar').fullCalendar('removeEvents');
+               $('#calendar').fullCalendar('refetchEvents');
             }
         });
 
     });
+    
+
 };
 
-// 삭제버튼
-$('#deleteEvent').on('click', function () {
+//삭제버튼
+$('body').on('click','#deleteEvent', function () {
     
     $('#deleteEvent').unbind();
     $("#calendar").fullCalendar('removeEvents', $(this).data('id'));
+    console.log($(this).data('id'))
     eventModal.modal('hide');
-
+    
+    var CalObj = {
+            USER_EMAIL : $('#USER_EMAIL').text(),
+            MEMO_NUM : gevent.MEMO_NUM
+         };
+    
     //삭제시
     $.ajax({
         type: "get",
-        url: "calendarDeleteAction.net",	//delete
-        data: {
-            //...
-        },
+        url: "calendarDeleteAction.net",   //delete
+        data: CalObj,
         success: function (response) {
-            alert('삭제되었습니다.');
+           console.log("calendarDeleteAction.net")
+           $('#calendar').fullCalendar('removeEvents');
+           $('#calendar').fullCalendar('refetchEvents');
         }
     });
 

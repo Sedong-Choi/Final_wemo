@@ -1,18 +1,29 @@
 var draggedEventIsAllDay;
 var activeInactiveWeekends = true;
 
+var eventModal = $('#eventModal');
+
+var modalTitle = $('.modal-title');
+var editAllDay = $('#edit-allDay');
+var editTitle = $('#edit-title');
+var editStart = $('#edit-start');
+var editEnd = $('#edit-end');
+var editType = $('#MEMO_SUB');
+var editColor = $('#MEMO_COLOR');
+var editDesc = $('#MEMO_TEX');
+
 function getDisplayEventDate(event) {
 
   var displayEventDate;
-
-  if (event.allDay == false) {
+  
+  if (event.allDay == false) {  
     var startTimeEventInfo = moment(event.start).format('HH:mm');
     var endTimeEventInfo = moment(event.end).format('HH:mm');
     displayEventDate = startTimeEventInfo + " - " + endTimeEventInfo;
   } else {
     displayEventDate = "하루종일";
   }
-
+  console.log(displayEventDate)
   return displayEventDate;
 }
 
@@ -20,22 +31,24 @@ function filtering(event) {
   var show_username = true;
   var show_type = true;
 
-  var username = $('input:checkbox.filter:checked').map(function () {
-    return $(this).val();
+  var CALENDAR_USERNAME = $('input:checkbox.filter:checked').map(function () {
+     
+     return $(this).val();
   }).get();
+ 
   var types = $('#type_filter').val();
 
-  show_username = username.indexOf(event.username) >= 0;
-
+  show_username = CALENDAR_USERNAME.indexOf(event.CALENDAR_USERNAME) >= 0;
+  
   if (types && types.length > 0) {
     if (types[0] == "all") {
       show_type = true;
     } else {
-      show_type = types.indexOf(event.type) >= 0;
+      show_type = types.indexOf(event.MEMO_SUB) >= 0;
     }
   }
-
-  return show_username && show_type;
+ 
+  return  show_username && show_type;
 }
 
 function calDateWhenResize(event) {
@@ -50,7 +63,7 @@ function calDateWhenResize(event) {
     newDates.endDate = moment(event.end._d).subtract(1, 'days').format('YYYY-MM-DD');
   } else {
     newDates.startDate = moment(event.start._d).format('YYYY-MM-DD HH:mm');
-    newDates.endDate = moment(event.end._d).format('YYYY-MM-DD HH:mm');
+    newDates.endDate = moment(event.end._d).subtract(1, 'days').format('YYYY-MM-DD HH:mm');
   }
 
   return newDates;
@@ -70,7 +83,7 @@ function calDateWhenDragnDrop(event) {
 
   //하루짜리 all day
   if (event.allDay && event.end === event.start) {
-    console.log('1111')
+    
     newDates.startDate = moment(event.start._d).format('YYYY-MM-DD');
     newDates.endDate = newDates.startDate;
   }
@@ -83,8 +96,8 @@ function calDateWhenDragnDrop(event) {
 
   //all day가 아님
   else if (!event.allDay) {
-    newDates.startDate = moment(event.start._d).format('YYYY-MM-DD HH:mm');
-    newDates.endDate = moment(event.end._d).format('YYYY-MM-DD HH:mm');
+   /* newDates.startDate = moment(new Date(event.start._d)).format('YYYY-MM-DD HH:mm');*/
+    newDates.endDate = moment(new Date(event.end._d)).subtract(1, 'days').format('YYYY-MM-DD HH:mm');
   }
 
   return newDates;
@@ -92,24 +105,29 @@ function calDateWhenDragnDrop(event) {
 
 
 var calendar = $('#calendar').fullCalendar({
-
+   
   eventRender: function (event, element, view) {
-
-    //일정에 hover시 요약
+     
+     switch(event.MEMO_SUB) {
+       case "STUDY" : event.MEMO_SUB = "공부"; break;
+       case "HEALTH" : event.MEMO_SUB = "운동"; break;
+       case "MONEY" : event.MEMO_SUB = "가계부"; break;
+       }
+     console.log(event)
     element.popover({
       title: $('<div />', {
         class: 'popoverTitleCalendar',
         text: event.title
       }).css({
-        'background': event.backgroundColor,
-        'color': event.textColor
+        'background': event.MEMO_COLOR,
+        'color': event.CALENDAR_TEXTCOLOR
       }),
       content: $('<div />', {
           class: 'popoverInfoCalendar'
-        }).append('<p><strong>등록자:</strong> ' + event.username + '</p>')
-        .append('<p><strong>구분:</strong> ' + event.type + '</p>')
+        }).append('<p><strong>등록자:</strong> ' + event.USER_EMAIL + '</p>')
+        .append('<p><strong>구분:</strong> ' + event.MEMO_SUB + '</p>')
         .append('<p><strong>시간:</strong> ' + getDisplayEventDate(event) + '</p>')
-        .append('<div class="popoverDescCalendar"><strong>설명:</strong> ' + event.description + '</div>'),
+        .append('<div class="popoverDescCalendar"><strong>설명:</strong> ' + event.MEMO_TEX + '</div>'),
       delay: {
         show: "800",
         hide: "50"
@@ -138,9 +156,9 @@ var calendar = $('#calendar').fullCalendar({
   },
 
   header: {
-    left: 'today, prevYear, nextYear, viewWeekends',
+    left: 'prevYear, nextYear',
     center: 'prev, title, next',
-    right: 'month,agendaWeek,agendaDay,listWeek'
+    right: 'today'
   },
   views: {
     month: {
@@ -164,22 +182,60 @@ var calendar = $('#calendar').fullCalendar({
    *  일정 받아옴 
    * ************** */
   events: function (start, end, timezone, callback) {
-    $.ajax({		//1일  월말   	서울		..
-      type: "get",
-      url: "calendarListAjax.net",		// select
-      data: {
-        // 실제 사용시, 날짜를 전달해 일정기간 데이터만 받아오기를 권장
-      },
-      dataType:"json",
+     
+     function convert(str) {
+        var date = new Date(str),
+          mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+          day = ("0" + date.getDate()).slice(-2);
+        return [date.getFullYear(), mnth, day].join("-");
+      }     
+     
+     var CalObj = {"USER_EMAIL" : $('#USER_EMAIL').text()};
+     
+    $.ajax({      
+      type: "POST",
+      url: "calendarListAjax.net",      // select
+      data: CalObj,
+      dataType : "json",
       success: function (response) {
-        var fixedDate = response.map(function (array) {
+         
+         var events = [];
+         $.each(response, function(index){
+            response[index].start = moment(parseInt(response[index].start)).format("YYYY-MM-DD HH:mm")
+            response[index].end = moment(parseInt(response[index].end)).format("YYYY-MM-DD HH:mm")
+            console.log(" response[index].start : " + response[index].start + ",  response[index].end : " +  response[index].end)
+            
+         })
+         events.push(response);
+         console.log(events);
+         $('#calendar').fullCalendar("renderEvent", events);
+   
+        var fixedDate = response.map(function(array){
+           
+           if(array.CALENDAR_ALLDAY == 1){
+              array.allDay = true;
+              //console.log('CALENDAR_ALLDAY T = '+ array.CALENDAR_ALLDAY)
+           }else{
+              array.allDay = false;
+              //console.log('CALENDAR_ALLDAY F = '+ array.CALENDAR_ALLDAY)
+           }
           if (array.allDay && array.start !== array.end) {
-            // 이틀 이상 AllDay 일정인 경우 달력에 표기시 하루를 더해야 정상출력
-            array.end = moment(array.end).add(1, 'days');
+             array.end = moment(array.end);
+          } else {
+             array.end = moment(array.end);
           }
+           console.log(array)
           return array;
-        })
-        callback(fixedDate);
+        });
+        
+       callback(fixedDate);
+       
+        $.each(response, function(index){                
+          $('.CAL_MEMO_NUM').eq(index).text(response[index].MEMO_NUM);
+          console.log("response["+index+"].MEMO_NUM : " + response[index].MEMO_NUM)
+       });
+        
+        
       }
     });
   },
@@ -194,20 +250,83 @@ var calendar = $('#calendar').fullCalendar({
   eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
     $('.popover.fade.top').remove();
 
+    if (event.allDay === true) {
+        editAllDay.prop('checked', true);
+    } else {
+        editAllDay.prop('checked', false);
+    }
+    
+    if (event.end === null) {
+        event.end = event.start;
+    }
+
+    if (event.allDay === true && event.end !== event.start) {
+        editEnd.val(moment(event.end).format('YYYY-MM-DD HH:mm'))
+    } else {
+       editEnd.val(event.end.format('YYYY-MM-DD HH:mm'));
+       // editEnd.val(event.end.format('YYYY-MM-DD HH:mm'));
+    }
+    
+    editTitle.val(event.title);
+    editStart.val(event.start.format('YYYY-MM-DD HH:mm'));
+    editType.val(event.MEMO_SUB);
+    editDesc.val(event.MEMO_TEX);
+    editColor.val(event.MEMO_COLOR).css('color', event.MEMO_COLOR);
+
+    addBtnContainer.hide();
+    modifyBtnContainer.show();
+    
     /** 리사이즈시 수정된 날짜반영
      * 하루를 빼야 정상적으로 반영됨. */
     var newDates = calDateWhenResize(event);
 
+    // 드랍시 수정된 날짜반영
+    var statusAllDay;
+    var startDate;
+    var endDate;
+    var displayDate;
+    var USER_EMAIL = $('#USER_EMAIL').text();
+
+    if (editAllDay.is(':checked')) {
+        statusAllDay = true;
+        startDate = moment(editStart.val()).format('YYYY-MM-DD HH:mm');
+        endDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD HH:mm');
+        displayDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD');
+    } else {
+        statusAllDay = false;
+        startDate = moment(editStart.val()).format('YYYY-MM-DD HH:mm');
+        endDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD HH:mm');
+        displayDate = moment(endDate).format('YYYY-MM-DD');
+    }
+
+    event.allDay = statusAllDay;
+    event.title = editTitle.val();
+    event.start = startDate;
+    event.end = endDate;
+    event.MEMO_SUB = editType.val();
+    event.MEMO_COLOR = editColor.val();
+    event.MEMO_TEX = editDesc.val();
+   
+   var eventfix = {
+         USER_EMAIL : USER_EMAIL,
+           MEMO_SUB : editType.val(),
+           MEMO_TEX : editDesc.val(),
+           title : editTitle.val(),
+           start : Date.parse(startDate),
+           end : Date.parse(editEnd.val()),
+           MEMO_COLOR : editColor.val(),
+           allDay: editAllDay.is(":checked"),
+           MEMO_NUM : event.MEMO_NUM
+   }
+
     //리사이즈한 일정 업데이트
     $.ajax({
       type: "get",
-      url: "calendarREupdate.net",		//update
-      data: {
-        //id: event._id,
-        //....
-      },
+      url: "calendarREupdate.net",      //update
+      data: eventfix,
       success: function (response) {
-        alert('수정: ' + newDates.startDate + ' ~ ' + newDates.endDate);
+         $('#calendar').fullCalendar('removeEvents');
+          $('#calendar').fullCalendar('refetchEvents');
       }
     });
 
@@ -220,7 +339,35 @@ var calendar = $('#calendar').fullCalendar({
   //일정 드래그앤드롭
   eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
     $('.popover.fade.top').remove();
+    
+    console.trace()
+    if (event.allDay === true) {
+        editAllDay.prop('checked', true);
+    } else {
+        editAllDay.prop('checked', false);
+    }
+    
+    if (event.end === null) {
+        event.end = event.start;
+    }
 
+    if (event.allDay === true && event.end !== event.start) {
+        editEnd.val(moment(event.end).format('YYYY-MM-DD HH:mm'))
+    } else {
+        editEnd.val(moment(event.end).format('YYYY-MM-DD HH:mm'));
+        //editEnd.val(event.end.format('YYYY-MM-DD HH:mm'));
+    }
+    
+    console.log("editEnd:"+editEnd.val()+", event.end:"+event.end)
+    editTitle.val(event.title);
+    editStart.val(event.start.format('YYYY-MM-DD HH:mm'));
+    editType.val(event.MEMO_SUB);
+    editDesc.val(event.MEMO_TEX);
+    editColor.val(event.MEMO_COLOR).css('color', event.MEMO_COLOR);
+
+    addBtnContainer.hide();
+    modifyBtnContainer.show();
+    
     //주,일 view일때 종일 <-> 시간 변경불가
     if (view.type === 'agendaWeek' || view.type === 'agendaDay') {
       if (draggedEventIsAllDay !== event.allDay) {
@@ -231,17 +378,53 @@ var calendar = $('#calendar').fullCalendar({
     }
 
     // 드랍시 수정된 날짜반영
-    var newDates = calDateWhenDragnDrop(event);
+    var statusAllDay;
+    var startDate;
+    var endDate;
+    var displayDate;
+    var USER_EMAIL = $('#USER_EMAIL').text();
 
+    if (editAllDay.is(':checked')) {
+        statusAllDay = true;
+        startDate = moment(editStart.val()).format('YYYY-MM-DD HH:mm');
+        endDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD HH:mm');
+        displayDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD');
+    } else {
+        statusAllDay = false;
+        startDate = moment(editStart.val()).format('YYYY-MM-DD HH:mm');
+        endDate = moment(editEnd.val()).add(1, 'days').format('YYYY-MM-DD HH:mm');
+        displayDate = moment(endDate).format('YYYY-MM-DD');
+    }
+
+    event.allDay = statusAllDay;
+    event.title = editTitle.val();
+    event.start = startDate;
+    event.end = endDate;
+    event.MEMO_SUB = editType.val();
+    event.MEMO_COLOR = editColor.val();
+    event.MEMO_TEX = editDesc.val();
+   
+   var eventfix = {
+         USER_EMAIL : USER_EMAIL,
+           MEMO_SUB : editType.val(),
+           MEMO_TEX : editDesc.val(),
+           title : editTitle.val(),
+           start : Date.parse(startDate),
+           end : Date.parse(editEnd.val()),
+           MEMO_COLOR : editColor.val(),
+           allDay: editAllDay.is(":checked"),
+           MEMO_NUM : event.MEMO_NUM
+   }
+    
     //드롭한 일정 업데이트
     $.ajax({
       type: "get",
-      url: "calendarDGupdate.net",		// update
-      data: {
-        //...
-      },
+      url: "calendarDGupdate.net",      // update
+      data: eventfix,
       success: function (response) {
-        alert('수정: ' + newDates.startDate + ' ~ ' + newDates.endDate);
+             
+             $('#calendar').fullCalendar('removeEvents');
+            $('#calendar').fullCalendar('refetchEvents');
       }
     });
 
@@ -310,7 +493,7 @@ var calendar = $('#calendar').fullCalendar({
 
   locale: 'ko',
   timezone: "local",
-  nextDayThreshold: "09:00:00",
+  nextDayThreshold: "00:00:00",
   allDaySlot: true,
   displayEventTime: true,
   displayEventEnd: true,
@@ -337,5 +520,5 @@ var calendar = $('#calendar').fullCalendar({
   dayPopoverFormat: 'MM/DD dddd',
   longPressDelay: 0,
   eventLongPressDelay: 0,
-  selectLongPressDelay: 0
+  selectLongPressDelay: 0,
 });

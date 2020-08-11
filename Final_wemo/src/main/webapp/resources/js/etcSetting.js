@@ -1,5 +1,5 @@
 //SELECT 색 변경
-$('#edit-color').change(function () {
+$('#MEMO_COLOR').change(function () {
     $(this).css('color', $(this).val());
 });
 

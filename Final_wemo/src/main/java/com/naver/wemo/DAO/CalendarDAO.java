@@ -1,46 +1,45 @@
 package com.naver.wemo.DAO;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.naver.wemo.domain.Memo;
+import com.naver.wemo.domain.Calendarbean;
 
 @Repository
 public class CalendarDAO {
 
-	
-	 @Autowired
-	 private SqlSessionTemplate sqlSession;
-	 
-	 public void insert(Memo memo)
-	 { sqlSession.insert("Cal.insert", memo); }
-	 
-	 public int update(Memo memo)
-	 { return sqlSession.update("Cal.update", memo); }	
+	@Autowired
+	private SqlSessionTemplate sqlSession;
 
-	public int calendarDelete(int num) {
-		return sqlSession.delete("Cal.calendarDelete", num);
+	public int insert(Calendarbean calendarbean){
+		return sqlSession.insert("Cal.insert", calendarbean);	
 	}
 
-	public int REupdate(Memo memo) {
-		return sqlSession.update("Cal.REupdate",memo);
+	public int update(Calendarbean calendarbean) {
+		return sqlSession.update("Cal.update", calendarbean);
 	}
 
-	public int DGupdate(Memo memo) {
-		return sqlSession.update("Cal.DGupdate",memo);
+	public int delete(Calendarbean calendarbean) {
+		return sqlSession.delete("Cal.delete", calendarbean);
 	}
 
-	public int getListCount() {
-		return sqlSession.selectOne("Cal.count");
+	public int REupdate(Calendarbean calendarbean) {
+		return sqlSession.update("Cal.update", calendarbean);
 	}
 
-	public List<Memo> getcalendarList(int page, int limit) {
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		return sqlSession.selectList("Cal.list",map);
+	public int DGupdate(Calendarbean calendarbean) {
+		return sqlSession.update("Cal.update", calendarbean);
 	}
-	 
+
+	public int getListCount(Calendarbean calendarbean) {
+		return sqlSession.selectOne("Cal.count", calendarbean);
+	}
+
+	public List<Calendarbean> getcalendarList(Calendarbean calendarbean) {
+		return sqlSession.selectList("Cal.list", calendarbean);
+	}
+
 }
